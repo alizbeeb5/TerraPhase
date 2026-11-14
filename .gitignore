@@ -218,3 +218,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# TerraPhase GCOV: keep downloaded products and generated files local
+data/
+output/
+*.h5
+*.hdf5
+*.tif
+*.tiff
+node_modules/
+
