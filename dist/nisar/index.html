@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101510">
+  <title>NISAR imagery | Canopy Watch</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="./browse.css">
+  <script type="module" src="./browse.js"></script>
+</head>
+<body>
+<header class="top browse-top">
+  <a class="brand" href="../"><span class="brand-icon" aria-hidden="true">◉</span> Canopy<span>Watch</span></a>
+  <nav aria-label="Workspace">
+    <a href="../">Explore case &amp; Radar lab</a>
+    <a href="./" aria-current="page">NISAR imagery</a>
+  </nav>
+</header>
+<main>
+  <section class="intro">
+    <div>
+      <p class="eyebrow">NASA–ISRO NISAR</p>
+      <h1>NISAR imagery</h1>
+      <p id="subhead">Explore real L-band radar previews from Panama and Rondônia.</p>
+    </div>
+    <span class="status"><span></span> Official ASF browse imagery</span>
+  </section>
+  <div class="workspace browse-grid">
+    <section class="stage" aria-label="Radar imagery">
+      <div class="stage-head browse-head">
+        <div><p class="overline">STUDY AREA</p><h2 id="scene-title">Panama</h2></div>
+        <div class="segmented" id="layers" aria-label="Image layer">
+          <button type="button" data-layer="HH" aria-pressed="false">HH</button>
+          <button type="button" data-layer="HV" aria-pressed="false">HV</button>
+          <button type="button" data-layer="map" aria-pressed="true">Map overview</button>
+        </div>
+      </div>
+      <div id="browse-images" class="browse-images">
+        <figure id="current-view"><img id="current-image" alt=""><figcaption id="current-caption"></figcaption></figure>
+        <figure id="other-view" hidden><img id="other-image" alt=""><figcaption id="other-caption"></figcaption></figure>
+      </div>
+      <p id="image-status" class="browse-message" role="status">Loading imagery…</p>
+    </section>
+    <aside class="evidence" aria-label="Scene controls and sources">
+      <div class="evidence-head"><p class="overline">SCENE SELECTION</p><h2>Choose an acquisition</h2></div>
+      <div class="browse-controls">
+        <label>Location <select id="region" disabled></select></label>
+        <label>Acquisition <select id="scene" disabled></select></label>
+        <label class="toggle"><input id="compare" type="checkbox" disabled> Compare both Panama passes</label>
+      </div>
+      <div class="browse-details">
+        <div id="scene-detail" aria-live="polite"></div>
+        <p>Use these rendered previews for visual inspection. Measuring change requires calibrated rasters on a common grid.</p>
+        <div id="scene-downloads"></div>
+        <a href="https://drive.google.com/drive/folders/1B3d7y_jfo6c8C0fmnx2EuRsv75R1bc2H" target="_blank" rel="noopener">Original PNGs in Google Drive</a>
+      </div>
+    </aside>
+  </div>
+  <footer class="foot"><span>TerraPhase <span class="muted">/</span> NASA Space Apps project</span><span>Imagery credit NASA / ISRO NISAR · Alaska Satellite Facility</span></footer>
+</main>
+</body>
+</html>

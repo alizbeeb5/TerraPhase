@@ -2,6 +2,10 @@
 
 This starter backend reads a NISAR Level-2 GCOV HDF5 file, creates georeferenced full-resolution images, and serves PNG map tiles with a matching legend. The original HDF5 file is opened read-only.
 
+## Browse real NISAR imagery
+
+Open **NISAR imagery demo** from the world map or go to `/explorer/nisar/`. The bundled official ASF previews show HH, HV, and map overviews for two Panama passes and one Rondônia pass. The Panama pair also supports side-by-side viewing. Each acquisition links to the original PNG and the calibrated HDF5 science download through Earthdata Login. For a static-only demo, serve `dist/` and open `/nisar/`.
+
 ## Open the integrated application
 
 **Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) after starting the server.**
