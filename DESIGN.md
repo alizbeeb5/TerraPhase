@@ -1,9 +1,13 @@
-# Viewer design
+# Integrated explorer design
 
-Mode: Operate. A familiar geographic image viewer, following the user's ASF Search reference.
+Mode: Operate. Three connected parts preserve the supplied interfaces and make the downloaded NISAR data inspectable.
 
-The local FastAPI root opens the image viewer. The map takes the entire working area under a compact header. A narrow white sidebar holds acquisition information, HH/HV selection, fit/full-detail navigation and downloads. Teal identifies the selected footprint and active controls. The background is a quiet dark blue-gray so grayscale radar pixels remain clear. A white legend stays anchored at the map's lower right, with numeric minimum, midpoint and maximum backscatter values in dB. Segoe UI and Arial system typography support compact, readable controls. On small screens, the sidebar becomes a compact strip above the map; secondary information collapses while the full-resolution download remains visible.
+- **World map at `/`:** the downloaded Canopy Watch light, three-column interface provides map tools, a central geographic viewport and scene information. Blue footprints show files available on the local server, currently one scene. Clicking a footprint opens the image; drawing a rectangle or entering coordinates checks actual data coverage and opens that selected area. Bundled Natural Earth land remains beneath the external Esri imagery and labels, so geographic context and local scene selection remain available when the background service fails.
+- **Shared explorer at `/explorer/`:** the dark-green explorer from `alizbeeb5/TerraPhase` main at `9f2140f09659f06d2f61dab6ccb3bc61b72e6d52` supplies the inspection workspace. Forest-green surfaces, lime controls, muted text, compact image tools and an adjacent evidence panel retain its visual identity. On mobile, the workspace stacks and controls wrap while the image stays prominent.
+- **Actual NISAR integration:** geographic HH/HV tiles support pan, zoom and native-detail inspection, with a grayscale legend and numeric backscatter values in dB. Whole-scene and selected-area downloads use the prepared source data. The source has a 10 m native grid; further enlargement adds no detail. Terrain view drapes the radar texture over a real DEM with matching geographic bounds, using a sampled 129 × 129 mesh overview and physical vertical exaggeration.
 
-Image content leads immediately; there is no introduction screen. Bundled Leaflet provides wheel, keyboard, pointer drag and touch navigation, alongside Fit image and World view controls. View full detail opens native zoom 14 for the supplied 10 m grid; further zoom enlarges existing samples. Keyboard focus is visible, controls have text labels, and status messages distinguish loading, unavailable imagery and an empty catalog.
+The shared observed reference case and synthetic radar lab remain distinct modes with their own evidence and labels. The actual GCOV scene is a single acquisition and does not establish temporal forest loss or change. Loading, unavailable-background and invalid-selection messages explain the current state. Visible keyboard focus and keyboard-operable footprints support navigation alongside pointer and touch controls.
 
-Finish review: ship. Browser tests passed, including the compact mobile controls and visible full-resolution download.
+The legacy simple viewer remains at `/viewer/`. Integration work belongs on `mohamad-elrizz`; GitHub main remains untouched. Synced references and the downloaded HTML remain read-only.
+
+Finish review: **ship**, with no material fixes requested. All 18 backend tests passed, and the complete workflow passed in real Chrome at desktop and mobile sizes.

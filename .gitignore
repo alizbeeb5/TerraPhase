@@ -219,9 +219,17 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# TerraPhase GCOV: keep downloaded products and generated files local
-data/
-output/
+# Canopy Watch data rebuild intermediates
+cache/
+*.partial.tif
+
+# Shared frontend source from main is authored under dist/.
+!dist/
+!dist/**
+
+# Local GCOV products, generated imagery and development artifacts
+/data/
+/output/
 *.h5
 *.hdf5
 *.tif

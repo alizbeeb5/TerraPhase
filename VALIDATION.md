@@ -1,5 +1,15 @@
 # Verified result - 14 November 2026
 
+## Three-part integration
+
+The landing page now uses the supplied Canopy Watch world-map layout. Its one real catalog footprint and rectangular area selection open the shared explorer from GitHub main `9f2140f09659f06d2f61dab6ccb3bc61b72e6d52`. Real NISAR tiles replace the sample imagery only in the new NISAR mode. The original observed reference case, optical swipe, timeline, evidence and synthetic radar lab remain separately available.
+
+`python -m pytest -q`: **18 passed** after integration. New tests compare native cropped pixels directly with the source COG, test transparent clipping, reject invalid/out-of-coverage areas, verify Terrarium decoding across tile boundaries, and confirm matching DEM/texture bounds. One third-party test-client deprecation warning remains.
+
+`tests/integration.browser.cjs` passed in Chrome at desktop and mobile sizes, with no JavaScript exceptions. It covers footprint-click navigation, mouse-drawn rectangular selection, native zoom and pan, HH/HV switching, clipped tile requests, the preserved optical case and radar lab, real DEM terrain draping, rotation/exaggeration, and a DEM slope overlay. The tested selected terrain used 129 x 129 actual elevation samples and rendered 32,768 triangles. Screenshots and the report are in `data/validation/integrated/`.
+
+The world map has a local Natural Earth coastline beneath the external Esri backgrounds; the local outline remains visible while satellite tiles load. A finishing review returned **ship**, with no material fixes.
+
 ## Interactive website
 
 The actual image viewer is now served at `http://127.0.0.1:8080/`. A real Chrome browser check passed image visibility, matching legend, HH/HV switching, native-detail tile requests, mouse-wheel zoom, keyboard panning, fit-to-image, world view, and mobile layout without horizontal overflow or JavaScript exceptions. The check asserts that the page never requests the overview PNG. Screenshots and its report are in `data/validation/viewer/`.

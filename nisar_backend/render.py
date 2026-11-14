@@ -69,7 +69,7 @@ def overview_level(native_resolution: float, target_resolution: float, factors: 
     return selected
 
 
-def render_tile(cog, z: int, x: int, y: int, vmin: float, vmax: float, cmap: str) -> bytes:
+def render_tile(cog, z: int, x: int, y: int, vmin: float, vmax: float, cmap: str, clip=None) -> bytes:
     bounds = tile_bounds(z, x, y)
     # A separate dataset per request avoids sharing GDAL handles across threads.
     with ExitStack() as stack:
@@ -85,6 +85,9 @@ def render_tile(cog, z: int, x: int, y: int, vmin: float, vmax: float, cmap: str
                        width=256, height=256, src_nodata=np.nan, nodata=np.nan,
                        resampling=Resampling.average, warp_mem_limit=64) as vrt:
             power = vrt.read(1, masked=True)
+            if clip is not None:
+                from .regions import clip_mask, mercator_bounds
+                power = clip_mask(power, vrt.transform, mercator_bounds(clip))
     return colorize(power, vmin, vmax, cmap)
 
 

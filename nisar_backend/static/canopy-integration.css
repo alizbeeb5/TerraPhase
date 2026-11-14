@@ -1,0 +1,27 @@
+/* Preserve Canopy Watch's layout and tokens; connect its viewport to real data. */
+.center-stage{min-width:0}.viewport-area{padding:0;display:block;min-height:340px}
+#radar-map{position:absolute;inset:0;width:100%;height:100%;background:#15212a}
+#terrain-3d{z-index:100}#terrain-3d canvas{display:block;width:100%;height:100%}
+.scene-readout,.legend-overlay{z-index:500;backdrop-filter:none;background:var(--bg-panel)}
+.scene-readout{right:66px;left:12px;width:fit-content;max-width:calc(100% - 85px);font-family:var(--font-sans);font-size:.75rem}
+.legend-overlay{top:auto;bottom:22px;max-width:calc(100% - 24px)}
+.legend-bar.ramp-gray{background:linear-gradient(90deg,#000,#fff)}
+.basemap-switcher,.map-hint-pill{backdrop-filter:none;background:var(--bg-panel)}
+.map-hint-pill{white-space:normal;max-width:calc(100% - 28px);width:max-content;text-align:center;border-radius:var(--radius-md);bottom:24px}
+.leaflet-container{font-family:var(--font-sans)}.leaflet-control-zoom a{width:36px!important;height:36px!important;line-height:36px!important}
+#radar-map .leaflet-control-attribution{font-size:9px}.leaflet-control-scale{margin-bottom:5px!important}
+.single-date-note{font-size:.72rem;color:var(--text-muted);margin-top:2px}.acquisition-dot{height:9px;width:9px;border-radius:50%;background:var(--selection-green);flex-shrink:0}
+.scrubber-bar{padding:11px 15px;gap:10px}.scrubber-bar strong{font-size:.78rem}.demo-badge{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.downloads{margin-top:18px}.downloads a{text-decoration:none;line-height:1.4;font-size:.78rem}
+#coordinate-selection{margin-top:18px;font-size:.77rem;color:var(--text-muted)}#coordinate-selection summary{cursor:pointer;padding:6px 0}
+.coordinate-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:8px 0 10px}.coordinate-grid label{display:flex;flex-direction:column;gap:4px;font-size:.72rem}
+.coordinate-grid input{width:100%;min-width:0;min-height:34px;padding:5px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-panel);color:var(--text-main);font:inherit}
+#app-status{margin-top:16px;font-size:.75rem;line-height:1.55}#app-status[data-error=true]{border-color:var(--alert-orange);color:var(--text-main)}
+.scene-list{display:grid;gap:8px;margin-top:12px}.scene-open{display:block;font:inherit;font-size:.8rem;padding:12px;text-align:left;border:1px solid var(--accent);border-radius:var(--radius-sm);background:var(--accent-soft);color:var(--text-main);cursor:pointer;width:100%}.scene-open span{display:block;margin-top:3px;font-size:.72rem;color:var(--text-muted)}
+.data-facts{font-size:.78rem;margin:0}.data-facts div{display:flex;justify-content:space-between;gap:12px;margin:10px 0}.data-facts dt{color:var(--text-muted)}.data-facts dd{margin:0;font-weight:600;text-align:right}.bbox-text{font: .7rem var(--font-mono);overflow-wrap:anywhere;line-height:1.8}
+.terrain-busy{position:absolute;inset:0;z-index:200;background:var(--bg-canvas);color:#e6edf5;display:grid;place-content:center;padding:30px;text-align:center;line-height:1.7}
+.terrain-busy button{color:#e6edf5;background:#1e3348;border:1px solid #6987a3;border-radius:5px;padding:9px 12px;margin-top:14px;cursor:pointer;font:inherit}
+.select-box-cursor,.select-box-cursor .leaflet-interactive{cursor:crosshair!important}.leaflet-control-zoom a{color:var(--text-main);background:var(--bg-panel)}
+.panel-block .small-note{font-size:.74rem;color:var(--text-muted);line-height:1.6}.btn:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media(max-width:980px){.app-grid{grid-template-rows:auto minmax(430px,65vh) auto}.left-sidebar{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}.left-sidebar>#controls-map,.left-sidebar>#controls-analysis{grid-column:1/-1}.left-sidebar .helper-box{font-size:.74rem}.left-sidebar>#app-status{grid-column:1/-1;margin:0}.control-section .helper-box{margin-top:3px}.header-meta .demo-badge{font-size:.65rem}.brand-subtitle{display:none}.left-sidebar .downloads{margin:0}.left-sidebar>#coordinate-selection{margin:0}.viewport-area{min-height:360px}.basemap-switcher{max-width:calc(100% - 65px);font-size:.65rem}.scene-readout{font-size:.68rem}.legend-overlay{min-width:190px;font-size:.7rem}.right-panel{padding:18px}.panel-sticky-inner{max-width:700px;margin:0 auto}.scrubber-bar{padding:9px 12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}

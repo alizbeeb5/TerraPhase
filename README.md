@@ -1,12 +1,30 @@
-# NISAR GCOV image viewer and backend
+# TerraPhase: Canopy Watch with real NISAR data
 
 This starter backend reads a NISAR Level-2 GCOV HDF5 file, creates georeferenced full-resolution images, and serves PNG map tiles with a matching legend. The original HDF5 file is opened read-only.
 
-## Open the image viewer
+## Open the integrated application
 
-**Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) after starting the server.** This is the actual website, which opens directly on your GCOV image with a legend. Use the mouse wheel or +/− buttons to zoom, drag to pan, choose HH or HV, and use **View full detail** to reach the native grid. **Fit image** returns to the whole image. Keyboard arrows pan the focused map; touch gestures work on phones. The optional street map requires an Internet connection; your GCOV image and the bundled viewer work locally.
+**Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) after starting the server.**
+
+1. The world map shows rectangles for NISAR files actually prepared on this server. Currently there is one scene over Panama.
+2. Use **Find available image**, then click the blue footprint to open the whole scene. Or choose **Select box** and draw a rectangle inside it. A coordinate form is also available.
+3. The selection opens your friend's shared explorer in **Your NISAR image** mode, using the real GCOV tiles. Scroll or use +/− to zoom, drag or use keyboard arrows to pan, switch HH/HV, and use **Full detail** to reach the native grid.
+4. **3D terrain** drapes this area's actual radar texture onto a real elevation DEM. Rotate, zoom and adjust vertical exaggeration. The slope toggle uses DEM-derived slope, not a radar layover classification.
+5. Export evidence as JSON, download the whole-scene GeoTIFF, or download a native cropped GeoTIFF for a selected area up to 64 million pixels. Choose a smaller rectangle for larger crops.
+
+The shared **Explore case** and **Radar lab** remain available, including their optical comparison, timeline, evidence, and terrain features. Their Sentinel-1 case and explicitly synthetic radar lesson are separate from your NISAR measurements. The single NISAR date does not enable change alerts, loss totals, or before/after analysis. The simpler original image viewer remains at [/viewer](http://127.0.0.1:8080/viewer).
+
+The world-map source is the supplied HTML. The explorer in `dist/` and its bundled case/pipeline were integrated from [GitHub main at 9f2140f](https://github.com/alizbeeb5/TerraPhase/commit/9f2140f09659f06d2f61dab6ccb3bc61b72e6d52). The remote main branch is not edited by this integration.
 
 The website requests full-resolution XYZ tiles as you zoom; it does not enlarge the overview PNG. Above the native zoom it enlarges existing pixels. `/docs` is developer documentation, not the image viewer.
+
+### Elevation and map backgrounds
+
+No DEM file was supplied. The backend therefore retrieves public [Mapzen Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) and caches them in `data/dem-cache/`. Elevation/bathymetry is decoded in metres before interpolation. Both the radar texture and DEM use the same Web Mercator extent, with the north edge at row zero. Exaggeration scales actual relative elevation. A failed DEM request produces an error; no procedural terrain is substituted.
+
+To use your own georeferenced elevation GeoTIFF instead, set `$env:GCOV_DEM_PATH = 'C:\data\elevation.tif'` before starting the server. Elevations must be in metres. Original DEM sampling and the 3D mesh are independent of the 10 m radar grid; 3D is a sampled overview, while 2D retains native radar detail. Terrain credits are linked in the data/method dialog.
+
+Esri satellite backgrounds require Internet access. A bundled public-domain Natural Earth coastline keeps the world map available while those backgrounds load or when offline. Radar data, reference-case assets, and the shared UI are served locally. Previously cached DEM areas also remain available offline.
 
 The pipeline is:
 
@@ -101,6 +119,12 @@ Your friend can keep their current frontend. The API provides the data needed fo
 | `GET /api/scenes/{scene}/layers/{layer}/legend.png` | Legend for the requested display style |
 | `GET /api/scenes/{scene}/layers/{layer}/preview.png` | Exported preview with its legend |
 | `GET /api/scenes/{scene}/layers/{layer}/download.tif` | Full-resolution scientific COG download, including byte-range support |
+| `GET /api/scenes/{scene}/layers/{layer}/region?bbox=w,s,e,n` | Validate a rectangular selection and report native grid dimensions |
+| `GET /api/scenes/{scene}/layers/{layer}/texture.png?bbox=w,s,e,n` | Radar texture on the same extent as the 3D terrain |
+| `GET /api/scenes/{scene}/layers/{layer}/terrain?bbox=w,s,e,n&grid=129` | Real DEM vertex heights and slopes, with source attribution |
+| `GET /api/scenes/{scene}/layers/{layer}/crop.tif?bbox=w,s,e,n` | Lossless native-grid crop, with geographic masking |
+
+Tiles and TileJSON accept the same optional `bbox` to make everything outside the selection transparent. Selections with no downloaded coverage or usable backscatter are rejected. Coordinates always use west, south, east, north in WGS84 longitude/latitude; drawn rectangles are not expanded into arbitrary fixed-size squares.
 
 The footprint uses the product's own `boundingPolygon` when present. This normally follows the radar swath more closely than a square. When absent, the API explicitly labels the fallback as the projected grid boundary, which may include no-data margins. GeoJSON uses longitude, latitude. Leaflet bounds use latitude, longitude. Tiles use XYZ with Y increasing southward, not the flipped TMS convention.
 

@@ -1,0 +1,5 @@
+World coastline fallback: Natural Earth 1:110m land polygons.
+Source: https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson
+Data authors include Tom Patterson and Nathaniel Vaughn Kelso.
+Natural Earth data are in the public domain:
+https://www.naturalearthdata.com/about/terms-of-use/

@@ -25,6 +25,10 @@ include = ["nisar_backend*"]
 [tool.setuptools.package-data]
 nisar_backend = ["static/*", "static/vendor/*"]
 
+[tool.setuptools.data-files]
+"share/terraphase/explorer" = ["dist/index.html", "dist/app.js", "dist/styles.css", "dist/nisar-integration.js", "dist/nisar-integration.css"]
+"share/terraphase/explorer/data" = ["dist/data/*.json", "dist/data/*.png"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
