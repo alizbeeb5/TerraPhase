@@ -7,7 +7,7 @@ const images = new Map();
 const number = (value, digits = 1) => value.toLocaleString('en-US', {maximumFractionDigits: digits});
 const db = value => (value > 0 ? '+' : value < 0 ? '−' : '') + Math.abs(value).toFixed(2) + ' dB';
 const shortDate = date => new Date(date + 'T12:00:00Z').toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
-const state = {mode:'observed', view:'optical', step:0, location:'patch', slope:false, zoom:false, timer:0};
+const state = {mode:new URLSearchParams(location.search).has('scene')?'nisar':'observed', view:'optical', step:0, location:'patch', slope:false, zoom:false, timer:0};
 const views = {
   observed:[['optical','Before / after'],['change','Radar alerts'],['vh','VH'],['vv','VV'],['reference','Loss reference']],
   lesson:[['change','Radar alerts'],['hv','HV'],['hh','HH']],
@@ -83,6 +83,7 @@ function getImage(name) {
 let revision = 0;
 async function draw() {
   const current = ++revision;
+  if (state.mode === 'nisar') return;
   const lesson = state.mode === 'lesson';
   if (!lesson && !observed) return;
   $('map-error').hidden = true;
@@ -166,6 +167,11 @@ function setStep(step) {
 }
 
 function switchMode(mode) {
+  if (mode === 'nisar') {
+    setPlay(false); state.mode='nisar'; state.view='hh';
+    window.NisarIntegration?.enter(); return;
+  }
+  window.NisarIntegration?.leave();
   setPlay(false);
   state.mode = mode;
   state.view = mode === 'lesson' ? 'change' : 'optical';
@@ -293,6 +299,7 @@ function setEvidence(lesson) {
 }
 
 function update() {
+  if (state.mode === 'nisar') { window.NisarIntegration?.update(); return; }
   const lesson = state.mode === 'lesson';
   document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed',String(b.dataset.mode === state.mode)));
   $('eyebrow').textContent = lesson ? 'SYNTHETIC APERTURE RADAR' : 'FOREST DISTURBANCE EXPLORER';
@@ -376,6 +383,7 @@ function update() {
 }
 
 function drawTerrain() {
+  if (state.mode === 'nisar') { window.NisarIntegration?.drawTerrain(); return; }
   const terrain = $('terrain-canvas');
   const ctx = terrain.getContext('2d');
   const az = Number($('angle').value) * Math.PI / 180;
@@ -418,6 +426,7 @@ function drawTerrain() {
 }
 
 function download() {
+  if (state.mode === 'nisar') { window.NisarIntegration?.exportEvidence(); return; }
   const blob = new Blob([JSON.stringify({selectedAcquisition:observed.radar[state.step].date,selectedLocation:state.location,...observed},null,2)],{type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -436,11 +445,11 @@ $('open-method').addEventListener('click',() => $('method').showModal());
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click',() => $(b.dataset.close).close()));
 $('orbit').addEventListener('click',() => {
   setPlay(false);
-  $('terrain-title').textContent = state.mode === 'lesson' ? 'Simulated terrain' : 'Rondônia terrain';
+  $('terrain-title').textContent = state.mode === 'nisar' ? 'NISAR image on real terrain' : state.mode === 'lesson' ? 'Simulated terrain' : 'Rondônia terrain';
   $('terrain').showModal();
   drawTerrain();
 });
-$('zoom').addEventListener('click',() => {state.zoom = !state.zoom; update();});
+$('zoom').addEventListener('click',() => {if(state.mode==='nisar'){window.NisarIntegration?.toggleDetail();return;}state.zoom = !state.zoom; update();});
 ['angle','exag'].forEach(id => $(id).addEventListener('input',drawTerrain));
 let drag;
 $('terrain-canvas').addEventListener('pointerdown',event => {drag=event.clientX;event.currentTarget.setPointerCapture(event.pointerId);});
@@ -469,5 +478,5 @@ fetch('./data/case.json').then(response => {
     return response.json();
   }).then(terrain => {observedTerrain=terrain;update();}).catch(error => console.error(error));
   if (state.mode === 'observed') switchMode('observed');
-  for (let i=0;i<observed.radar.length;i++) getImage('vh-' + i).catch(()=>{});
+  if(state.mode==='observed') for (let i=0;i<observed.radar.length;i++) getImage('vh-' + i).catch(()=>{});
 }).catch(error => {loadError=error;update();});

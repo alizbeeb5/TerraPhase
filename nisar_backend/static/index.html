@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173b48">
+  <title>NISAR Image Viewer</title>
+  <link rel="stylesheet" href="/assets/vendor/leaflet.css">
+  <link rel="stylesheet" href="/assets/viewer.css">
+  <script defer src="/assets/vendor/leaflet.js"></script>
+  <script defer src="/assets/viewer.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/" aria-label="NISAR image viewer home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="5" width="22" height="22" rx="3"/><path d="M5 21 14 12 20 18 27 11M5 26l9-9 6 6 7-7"/></svg>
+      <strong>NISAR</strong><span>Image viewer</span>
+    </a>
+    <span class="header-help">Scroll to zoom <span aria-hidden="true">·</span> Drag to explore</span>
+    <button id="world-view" class="header-button" type="button">World view</button>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar" aria-label="Image controls">
+      <div class="scene-heading">
+        <h1>Your GCOV image</h1>
+        <p id="acquisition">Loading your scene…</p>
+      </div>
+      <label class="scene-select-label" for="scene-select">Scene</label>
+      <select id="scene-select" aria-label="Choose scene" disabled></select>
+      <section class="layer-section" aria-labelledby="layer-label">
+        <h2 id="layer-label">Radar layer</h2>
+        <div id="layer-buttons" class="segmented" role="group" aria-label="Radar polarization"></div>
+        <p id="layer-description" class="muted">Select an image to explore.</p>
+      </section>
+      <div class="navigation-actions">
+        <button id="fit-image" type="button" class="primary" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg>Fit image
+        </button>
+        <button id="full-detail" type="button" disabled>View full detail</button>
+      </div>
+      <dl class="image-facts">
+        <div><dt>Pixel spacing</dt><dd id="pixel-spacing">—</dd></div>
+        <div><dt>Image size</dt><dd id="image-size">—</dd></div>
+      </dl>
+      <div class="map-options">
+        <label><input id="basemap-toggle" type="checkbox"> Show street map</label>
+        <label><input id="footprint-toggle" type="checkbox" checked> Show scene outline</label>
+      </div>
+      <a id="download-image" class="download-link" hidden>Download full-resolution image
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5"/></svg>
+      </a>
+      <p class="zoom-explanation">Zoom in to reveal the original detail. Beyond the native grid, existing pixels are enlarged.</p>
+      <div id="status" role="status" class="status" aria-live="polite">Opening image…</div>
+      <button id="retry" type="button" hidden>Try loading again</button>
+      <p class="sidebar-credit">NASA / ISRO NISAR</p>
+    </aside>
+    <main class="map-area" aria-label="Interactive GCOV image">
+      <div id="map" aria-label="Image map. Use arrow keys to pan and plus or minus to zoom."></div>
+      <div id="map-message" class="map-message" role="alert" hidden></div>
+      <div class="view-label"><span class="active-dot" aria-hidden="true"></span><span id="view-label">Preparing imagery</span></div>
+      <div id="legend" class="legend" aria-label="Backscatter legend" hidden>
+        <div class="legend-heading"><strong id="legend-title">HH backscatter</strong><span>γ⁰ · dB</span></div>
+        <div class="legend-bar" aria-hidden="true"></div>
+        <div class="legend-ticks"><span id="legend-min"></span><span id="legend-mid"></span><span id="legend-max"></span></div>
+        <div class="legend-note"><span>Weaker return</span><span>Stronger return</span></div>
+      </div>
+      <div id="position" class="position" aria-live="off"></div>
+    </main>
+  </div>
+  <noscript><div class="noscript">Enable JavaScript to pan and zoom the GCOV image.</div></noscript>
+</body>
+</html>

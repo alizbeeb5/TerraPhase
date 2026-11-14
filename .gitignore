@@ -222,3 +222,17 @@ __marimo__/
 # Canopy Watch data rebuild intermediates
 cache/
 *.partial.tif
+
+# Shared frontend source from main is authored under dist/.
+!dist/
+!dist/**
+
+# Local GCOV products, generated imagery and development artifacts
+/data/
+/output/
+*.h5
+*.hdf5
+*.tif
+*.tiff
+node_modules/
+

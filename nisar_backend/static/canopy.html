@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Canopy Watch – NISAR deforestation explorer</title>
+  <!-- External dependency 1: Leaflet 1.9.4 CSS -->
+  <link rel="stylesheet" href="/assets/vendor/leaflet.css">
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & AUTOMATIC DARK MODE (prefers-color-scheme)
+       Inspired by ASF Vertex & NASA Earthdata scientific interfaces
+       ========================================================================== */
+    :root {
+      --bg-app: #f3f5f8;
+      --bg-panel: #ffffff;
+      --bg-subtle: #e8edf3;
+      --bg-elevated: #f8fafc;
+      --bg-canvas: #0d131a;
+      --bg-overlay: rgba(255, 255, 255, 0.92);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-faint: #64748b;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --accent: #0b5ed7;
+      --accent-hover: #094bb0;
+      --accent-soft: rgba(11, 94, 215, 0.12);
+      --selection-green: #16a34a;
+      --selection-soft: rgba(22, 163, 74, 0.14);
+      --alert-orange: #f97316;
+      --alert-red: #dc2626;
+      --steep-magenta: #e11d48;
+      --tag-high-bg: #fee2e2;
+      --tag-high-fg: #991b1b;
+      --tag-med-bg: #fef3c7;
+      --tag-med-fg: #92400e;
+      --tag-low-bg: #dcfce7;
+      --tag-low-fg: #166534;
+      --badge-bg: #fffbeb;
+      --badge-fg: #b45309;
+      --badge-border: #fde68a;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-app: #0b1017;
+        --bg-panel: #131b26;
+        --bg-subtle: #1e293b;
+        --bg-elevated: #192330;
+        --bg-canvas: #070a0f;
+        --bg-overlay: rgba(19, 27, 38, 0.92);
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-faint: #64748b;
+        --border: #2a384b;
+        --border-subtle: #1e293b;
+        --accent: #38bdf8;
+        --accent-hover: #7dd3fc;
+        --accent-soft: rgba(56, 189, 248, 0.15);
+        --selection-green: #22c55e;
+        --selection-soft: rgba(34, 197, 94, 0.18);
+        --alert-orange: #fb923c;
+        --alert-red: #ef4444;
+        --steep-magenta: #f43f5e;
+        --tag-high-bg: rgba(239, 68, 68, 0.18);
+        --tag-high-fg: #fca5a5;
+        --tag-med-bg: rgba(245, 158, 11, 0.18);
+        --tag-med-fg: #fcd34d;
+        --tag-low-bg: rgba(34, 197, 94, 0.18);
+        --tag-low-fg: #86efac;
+        --badge-bg: rgba(245, 158, 11, 0.15);
+        --badge-fg: #fbbf24;
+        --badge-border: rgba(245, 158, 11, 0.35);
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+        --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    /* Mandatory utility rule */
+    [hidden] {
+      display: none !important;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: var(--font-sans);
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       TOP HEADER BAR
+       ========================================================================== */
+    .app-header {
+      height: 52px;
+      flex-shrink: 0;
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+      z-index: 1000;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #0b5ed7 0%, #16a34a 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-subtitle {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background-color: var(--badge-bg);
+      color: var(--badge-fg);
+      border: 1px solid var(--badge-border);
+      letter-spacing: 0.01em;
+    }
+
+    .demo-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+
+    /* ==========================================================================
+       THREE-COLUMN MAIN GRID (230px | map/canvas | 350px)
+       ========================================================================== */
+    .app-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr) 350px;
+      min-height: 0;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       LEFT SIDEBAR (230px) - Map tools OR Analysis controls
+       ========================================================================== */
+    .left-sidebar {
+      background-color: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .control-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background-color: var(--bg-elevated);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 500;
+      padding: 8px 11px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      text-align: left;
+      width: 100%;
+    }
+
+    .btn:hover:not(:disabled) {
+      background-color: var(--bg-subtle);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn.active {
+      background-color: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .btn-back {
+      background-color: var(--bg-subtle);
+      font-weight: 600;
+      border-color: var(--border);
+    }
+
+    .btn-group-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .btn-group-row .btn {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .btn-group-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .btn-group-3 .btn {
+      justify-content: center;
+      padding: 7px 4px;
+      font-size: 0.8rem;
+    }
+
+    .helper-box {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      line-height: 1.45;
+    }
+
+    .helper-box strong {
+      color: var(--text-main);
+    }
+
+    .slider-control {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .slider-val {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    input[type="range"]:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-elevated);
+      user-select: none;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: var(--steep-magenta);
+      cursor: pointer;
+    }
+
+    .magenta-swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background-color: var(--steep-magenta);
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+
+    /* ==========================================================================
+       CENTER STAGE (Map View OR Radar Analysis View)
+       ========================================================================== */
+    .center-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      background-color: var(--bg-canvas);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* World Map Wrapper */
+    #map-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      flex: 1;
+    }
+
+    #world-map {
+      width: 100%;
+      height: 100%;
+      background-color: #0b1520;
+    }
+
+    #world-map.select-box-cursor {
+      cursor: crosshair !important;
+    }
+
+    /* Basemap Switcher (Top-Right) */
+    .basemap-switcher {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 800;
+      background-color: var(--bg-overlay);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 6px 10px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+    }
+
+    .basemap-switcher label {
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .basemap-select {
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-main);
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    /* Map Selection Feedback Banner */
+    .map-hint-pill {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 800;
+      background-color: var(--bg-overlay);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-main);
+      box-shadow: var(--shadow-md);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* Analysis View Wrapper */
+    #analysis-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-canvas);
+    }
+
+    .viewport-area {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 16px;
+      min-height: 280px;
+    }
+
+    /* 2D Radar Canvas (128x128 grid scaled crisply) */
+    #radar-canvas {
+      width: min(100%, 520px);
+      aspect-ratio: 1 / 1;
+      max-height: 100%;
+      border: 1px solid #334155;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+      image-rendering: pixelated;
+      background-color: #05080c;
+      cursor: crosshair;
+    }
+
+    /* 3D Terrain Container */
+    #terrain-3d {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    #terrain-3d:active {
+      cursor: grabbing;
+    }
+
+    /* Pixel Inspector Readout (Top-Left of Analysis View) */
+    .scene-readout {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 30;
+      background-color: var(--bg-overlay);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+      pointer-events: none;
+    }
+
+    /* Legend Overlay (Top-Right / Bottom-Right of Analysis View) */
+    .legend-overlay {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 30;
+      background-color: var(--bg-overlay);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      min-width: 205px;
+      box-shadow: var(--shadow-md);
+      font-size: 0.75rem;
+    }
+
+    .legend-title {
+      font-weight: 700;
+      margin: 0 0 6px 0;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .legend-bar {
+      height: 10px;
+      width: 100%;
+      border-radius: 3px;
+      border: 1px solid rgba(128, 128, 128, 0.35);
+      margin-bottom: 4px;
+    }
+
+    .legend-bar.ramp-change {
+      background: linear-gradient(90deg, #f97316 0%, #ef4444 60%, #991b1b 100%);
+    }
+
+    .legend-bar.ramp-gray {
+      background: linear-gradient(90deg, #0f172a 0%, #94a3b8 55%, #f8fafc 100%);
+    }
+
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .legend-extra {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Bottom Time Scrubber Bar */
+    .scrubber-bar {
+      background-color: var(--bg-panel);
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 30;
+    }
+
+    .btn-play {
+      width: auto;
+      min-width: 88px;
+      justify-content: center;
+      font-weight: 600;
+      background-color: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .btn-play:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+      color: #ffffff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .btn-play {
+        color: #081018;
+      }
+      .btn-play:hover:not(:disabled) {
+        color: #081018;
+      }
+    }
+
+    .scrubber-track-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .scrubber-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      padding: 0 2px;
+    }
+
+    .scrubber-ticks span.active-tick {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .scrubber-date-box {
+      text-align: right;
+      min-width: 112px;
+      flex-shrink: 0;
+    }
+
+    .scrubber-date-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .scrubber-date-val {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       RIGHT SIDE PANEL (350px, Sticky Scientific Content)
+       ========================================================================== */
+    .right-panel {
+      background-color: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .panel-sticky-inner {
+      position: sticky;
+      top: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-header {
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .panel-area-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      color: var(--text-main);
+    }
+
+    .panel-coords {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Stat Chips */
+    .stat-chips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-chip {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+    }
+
+    .stat-chip-value {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: block;
+      line-height: 1.2;
+    }
+
+    .stat-chip-value.loss-highlight {
+      color: var(--alert-red);
+    }
+
+    .stat-chip-label {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* Panel Blocks */
+    .panel-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 14px;
+    }
+
+    .panel-block:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .panel-block-title {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .bullet-list {
+      margin: 0;
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--text-main);
+    }
+
+    .bullet-list li {
+      line-height: 1.45;
+    }
+
+    /* Accuracy Meter */
+    .accuracy-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 8px;
+      background-color: var(--bg-subtle);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    /* Possible Causes List */
+    .cause-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cause-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+    }
+
+    .cause-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 3px;
+    }
+
+    .cause-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .likelihood-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+
+    .tag-High {
+      background-color: var(--tag-high-bg);
+      color: var(--tag-high-fg);
+    }
+
+    .tag-Medium, .tag-Moderate {
+      background-color: var(--tag-med-bg);
+      color: var(--tag-med-fg);
+    }
+
+    .tag-Low {
+      background-color: var(--tag-low-bg);
+      color: var(--tag-low-fg);
+    }
+
+    .cause-desc {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* NASA Sources List */
+    .sources-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sources-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .sources-list a:hover {
+      background-color: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .source-url-hint {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-faint);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 130px;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE MOBILE / TABLET STACKING
+       ========================================================================== */
+    @media (max-width: 980px) {
+      body {
+        overflow-y: auto;
+        height: auto;
+        min-height: 100%;
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(420px, 62vh) auto;
+        overflow: visible;
+        height: auto;
+      }
+
+      .left-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 12px;
+      }
+
+      .right-panel {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        overflow-y: visible;
+      }
+
+      .panel-sticky-inner {
+        position: static;
+      }
+
+      .scrubber-ticks span:nth-child(even) {
+        display: none;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/canopy-integration.css">
+</head>
+<body>
+
+  <!-- TOP APPLICATION HEADER -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-logo" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12a10 10 0 0 1 10-10"/>
+          <path d="M6 12a6 6 0 0 1 6-6"/>
+          <circle cx="12" cy="12" r="2"/>
+          <path d="M12 14v8"/>
+          <path d="M8 22h8"/>
+        </svg>
+      </div>
+      <h1 class="brand-title">
+        Canopy Watch <span class="brand-subtitle">– NISAR deforestation explorer</span>
+      </h1>
+    </div>
+
+    <div class="header-meta">
+      <span class="demo-badge" title="Real GCOV backscatter from the locally prepared NISAR product.">
+        <span class="demo-badge-dot" aria-hidden="true"></span>
+        Downloaded NISAR data
+      </span>
+    </div>
+  </header>
+
+  <!-- THREE-COLUMN WORKSPACE -->
+  <main class="app-grid">
+
+    <!-- COLUMN 1: LEFT SIDEBAR (230px) -->
+    <aside class="left-sidebar" aria-label="Workspace controls">
+
+      <!-- MAP MODE CONTROLS -->
+      <div id="controls-map" class="control-section">
+        <p class="section-label">Map Tools</p>
+        <button type="button" id="tool-pan" class="btn active" aria-label="Pan the map; click an outlined NISAR scene to open it">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/>
+          </svg>
+          Pan map
+        </button>
+        <button type="button" id="tool-box" class="btn" aria-label="Draw a rectangular area inside available NISAR imagery">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+          </svg>
+          Select box
+        </button>
+
+        <div class="btn-group-row">
+          <button type="button" id="tool-zoom-in" class="btn" aria-label="Zoom in">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+            Zoom in
+          </button>
+          <button type="button" id="tool-zoom-out" class="btn" aria-label="Zoom out">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+            Zoom out
+          </button>
+        </div>
+
+        <button id="btn-available" type="button" class="btn">Find available image</button>
+        <div class="helper-box"><strong>Explore your NISAR data</strong><br>Blue rectangles mark downloaded images. Click a rectangle to open its image. Select box lets you draw a smaller area within the scene.</div>
+      </div>
+
+      <!-- ANALYSIS MODE CONTROLS -->
+      <div id="controls-analysis" class="control-section" hidden>
+        <button type="button" id="btn-return-map" class="btn btn-back" aria-label="Return to world map">
+          ← World map
+        </button>
+        <div class="btn-group-row"><button id="btn-fit-image" class="btn" type="button">Fit image</button><button id="btn-native" class="btn" type="button">Full detail</button></div>
+        <button id="btn-select-image" class="btn" type="button">Select area in image</button>
+        <button id="btn-whole-image" class="btn" type="button" hidden>Show whole image</button>
+
+        <div class="control-section" style="margin-top: 6px;">
+          <p class="section-label">Radar Layer</p>
+          <div class="btn-group-3" role="group" aria-label="Select radar layer">
+            <button type="button" class="btn" data-layer="change" disabled title="Change analysis needs at least two compatible acquisitions">Change</button>
+            <button type="button" class="btn" data-layer="hv" aria-label="Cross-polarized HV backscatter layer">HV</button>
+            <button type="button" class="btn" data-layer="hh" aria-label="Co-polarized HH backscatter layer">HH</button>
+          </div>
+        </div>
+
+        <div class="control-section" style="margin-top: 4px;">
+          <p class="section-label">Scene View</p>
+          <div class="btn-group-row" role="group" aria-label="Select 2D map or 3D terrain view">
+            <button type="button" id="btn-view-2d" class="btn active" aria-label="2D radar orthomap view">2D map</button>
+            <button type="button" id="btn-view-3d" class="btn" aria-label="3D displaced terrain view">3D terrain</button>
+          </div>
+        </div>
+
+        <div class="control-section slider-control" style="margin-top: 4px;">
+          <div class="slider-header">
+            <label for="slider-exag" class="section-label" style="margin:0;">Vertical exaggeration</label>
+            <span id="exag-readout" class="slider-val">3×</span>
+          </div>
+          <input type="range" id="slider-exag" min="1" max="10" step="0.5" value="3" disabled aria-label="Vertical exaggeration from 1x to 10x">
+        </div>
+
+        
+
+        <div class="helper-box" id="analysis-helper">The 2D map loads native backscatter tiles as you zoom. 3D terrain uses a real elevation DEM with the same image draped over it.</div>
+      </div>
+
+      <div class="control-section downloads" id="downloads" hidden>
+        <a id="download-full" class="btn" href="#">Download whole scene</a>
+        <a id="download-selection" class="btn" href="#" hidden>Download selected area</a>
+      </div>
+      <details id="coordinate-selection"><summary>Select by coordinates</summary>
+        <form id="selection-form">
+          <div class="coordinate-grid">
+            <label>West<input id="area-west" type="number" step="any" min="-180" max="180" required></label>
+            <label>South<input id="area-south" type="number" step="any" min="-85" max="85" required></label>
+            <label>East<input id="area-east" type="number" step="any" min="-180" max="180" required></label>
+            <label>North<input id="area-north" type="number" step="any" min="-85" max="85" required></label>
+          </div><button id="btn-open-area" class="btn" type="submit">Open selected area</button>
+        </form>
+      </details>
+      <div id="app-status" class="helper-box" role="status" aria-live="polite">Loading downloaded scenes…</div>
+    </aside>
+
+    <!-- COLUMN 2: CENTER STAGE (MAP OR RADAR SCENE) -->
+    <section class="center-stage" aria-label="Interactive viewport">
+
+      <!-- WORLD MAP STAGE -->
+      <div id="map-stage">
+        <div id="world-map" role="application" aria-label="Interactive global map for selecting study area"></div>
+
+        <!-- Top-Right Locked Basemap Indicator Pill -->
+        <div class="basemap-switcher" aria-label="Active basemap">
+          <span class="demo-badge-dot" style="background-color: var(--selection-green);" aria-hidden="true"></span>
+          <span style="font-weight: 600; color: var(--text-main);">Esri World Imagery + Places</span>
+        </div>
+
+        <div id="map-hint-pill" class="map-hint-pill">
+          Click the blue NISAR footprint, or use Select box inside the footprint
+        </div>
+      </div>
+
+      <!-- ANALYSIS STAGE -->
+      <div id="analysis-stage" hidden>
+        <div class="viewport-area">
+          <!-- 128x128 Radar Scene Canvas -->
+          <div id="radar-map" aria-label="Zoomable NISAR backscatter image"></div>
+
+          <!-- Three.js 3D Terrain Container -->
+          <div id="terrain-3d" hidden aria-label="3D interactive radar terrain model"></div>
+
+          <!-- Top-Left Hover / Mode Readout -->
+          <div id="scene-readout" class="scene-readout" role="status" aria-live="polite">
+            Loading actual NISAR imagery…
+          </div>
+
+          <!-- Legend Overlay -->
+          <div class="legend-overlay" aria-label="Radar colour scale legend">
+            <div class="legend-title">
+              <span id="legend-title-text">Gamma0 backscatter (dB)</span>
+            </div>
+            <div id="legend-bar" class="legend-bar ramp-gray"></div>
+            <div class="legend-labels">
+              <span id="legend-min">−3.5 dB</span>
+              <span id="legend-mid">−6.8 dB</span>
+              <span id="legend-max">−10.0 dB</span>
+            </div>
+            <div id="legend-steep-row" class="legend-extra" hidden>
+              <span class="magenta-swatch" aria-hidden="true"></span>
+              <span>Magenta tint: slope &gt;25° (layover/shadow risk)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Time Scrubber (8 acquisitions spaced 36 days apart) -->
+        <div class="scrubber-bar" aria-label="Available acquisition">
+          <span class="acquisition-dot" aria-hidden="true"></span>
+          <div><strong id="scrubber-date-val">7 November 2026</strong><div class="single-date-note">One acquisition available · change detection requires another date</div></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- COLUMN 3: RIGHT SIDE PANEL (350px) -->
+    <aside class="right-panel" aria-label="Scientific interpretation and NASA sources">
+      <div id="side-panel-content" class="panel-sticky-inner"></div>
+    </aside>
+
+  </main>
+
+  <script defer src="/assets/vendor/leaflet.js"></script>
+  <script defer src="/assets/vendor/three.min.js"></script>
+  <script defer src="/assets/selection.js"></script>
+  <script defer src="/assets/canopy.js"></script>
+</body>
+</html>

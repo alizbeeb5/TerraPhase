@@ -6,16 +6,23 @@
 <meta name="theme-color" content="#101510">
 <title>Canopy Watch | Forest disturbance explorer</title>
 <link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="/assets/vendor/leaflet.css">
+<link rel="stylesheet" href="./nisar-integration.css">
+<script defer src="/assets/vendor/leaflet.js"></script>
+<script defer src="/assets/vendor/three.min.js"></script>
+<script defer src="/assets/selection.js"></script>
 <script defer src="./app.js"></script>
+<script defer src="./nisar-integration.js"></script>
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="./" aria-label="Canopy Watch home"><span class="brand-icon" aria-hidden="true">◉</span> Canopy<span>Watch</span></a>
+  <a class="brand" href="/" aria-label="Canopy Watch world map"><span class="brand-icon" aria-hidden="true">◉</span> Canopy<span>Watch</span></a>
   <nav aria-label="Workspace">
+    <button data-mode="nisar" aria-pressed="false">Your NISAR image</button>
     <button data-mode="observed" aria-pressed="true">Explore case</button>
     <button data-mode="lesson" aria-pressed="false">Radar lab</button>
   </nav>
-  <button class="quiet method-button" id="open-method">Data &amp; method</button>
+  <div class="top-actions"><a class="quiet world-link" href="/">World map</a><button class="quiet method-button" id="open-method">Data &amp; method</button></div>
 </header>
 <main>
   <section class="intro">

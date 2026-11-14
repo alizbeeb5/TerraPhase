@@ -1,0 +1,20 @@
+/* Real GCOV mode extends the shared explorer without changing its case or lab. */
+.top-actions{display:flex;align-items:center;gap:10px}.world-link{text-decoration:none}
+.is-nisar .image-area{height:clamp(420px,62vh,760px);aspect-ratio:auto!important}
+#nisar-map{position:absolute;inset:0;background:#17231f;width:100%;height:100%}
+.is-nisar .image-area>.north{display:none}.is-nisar .image-area>.map-footer{z-index:450;bottom:12px;right:12px;left:12px;justify-content:flex-end}
+.is-nisar .map-zoom{z-index:450;top:96px;right:12px;min-height:33px}
+.is-nisar #before-label{z-index:450;left:12px;right:60px;width:fit-content;max-width:calc(100% - 70px);font-family:system-ui,sans-serif;font-size:.7rem;white-space:normal}
+.is-nisar #legend{min-width:225px;display:block;padding:11px 13px;line-height:1.5;font-size:.72rem;background:#111913f5}
+.nisar-legend-bar{height:12px;width:100%;background:linear-gradient(90deg,#000,#fff);border:1px solid #829180;border-radius:2px;margin:7px 0 4px}
+.nisar-legend-values{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums;font-size:.67rem}
+.nisar-controls{display:flex;gap:6px;flex-wrap:wrap;margin:10px 16px}.nisar-controls button,.nisar-download{padding:7px 9px;color:var(--lime);background:#202b20;border:1px solid #4b6043;border-radius:6px;font-size:.75rem;cursor:pointer;text-decoration:none;display:inline-block}
+.nisar-notice{font-size:.76rem;color:var(--muted);line-height:1.6;margin:0 16px 12px}.nisar-error{color:#ffc793}.nisar-source-name{overflow-wrap:anywhere;font: .66rem/1.65 ui-monospace,monospace}
+.is-nisar #evidence-body{overflow-wrap:anywhere}.nisar-downloads{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.is-nisar .leaflet-container{font-family:system-ui,sans-serif}.is-nisar .leaflet-control-zoom a{color:#e5eddd;background:#202b20;width:34px;height:34px;line-height:34px}.is-nisar .leaflet-control-attribution{font-size:9px;background:#111913e8;color:#c5d1bd}.is-nisar .leaflet-control-attribution a{color:#c5ef87}
+.is-nisar .leaflet-control-scale-line{color:#edf3e6;background:#17251be8;border-color:#c5d1bd}.is-nisar #map-error{z-index:600;background:#19261cf5}
+.select-box-cursor,.select-box-cursor .leaflet-interactive{cursor:crosshair!important}
+#nisar-terrain{height:390px;width:100%;position:relative;border-radius:8px;overflow:hidden;background:#0b120f;touch-action:none}#nisar-terrain canvas{display:block;width:100%;height:100%}
+.nisar-terrain-status{position:absolute;inset:0;display:grid;place-content:center;padding:24px;text-align:center;background:#0b120ff0;font-size:.9rem;line-height:1.7}.nisar-terrain-status button{border:1px solid var(--stroke);background:var(--surface-hi);color:var(--ink);padding:8px;border-radius:5px;margin-top:14px}
+.nisar-terrain-note{font-size:.74rem;color:var(--muted);line-height:1.55;margin-top:8px}.is-nisar .eyebrow,.is-nisar #stage-kicker,.is-nisar #evidence-kicker{display:none}
+@media(max-width:740px){.top-actions{gap:2px}.top-actions a,.top-actions button{font-size:.72rem;padding:5px}.is-nisar .image-area{height:60vh;min-height:390px}.is-nisar #legend{min-width:195px;font-size:.66rem}.is-nisar #before-label{font-size:.65rem}.nisar-controls{margin:8px 12px}#nisar-terrain{height:340px}.is-nisar h1{font-size:2.2rem;letter-spacing:-.04em}.is-nisar .intro{padding-top:20px;padding-bottom:20px}}
