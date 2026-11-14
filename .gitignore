@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Canopy Watch data rebuild intermediates
+cache/
+*.partial.tif

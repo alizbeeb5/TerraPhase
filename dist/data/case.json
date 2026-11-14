@@ -1,0 +1,203 @@
+{
+  "bounds": [
+    402000,
+    8927000,
+    424000,
+    8940000
+  ],
+  "epsg": 32720,
+  "radar": [
+    {
+      "id": "S1A_IW_GRDH_1SDV_20190822T094919_20190822T094944_028680_033EFD_rtc",
+      "date": "2019-08-22",
+      "orbit": 83,
+      "collection": "sentinel-1-rtc",
+      "assets": {
+        "vh": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2019/8/22/IW/DV/S1A_IW_GRDH_1SDV_20190822T094919_20190822T094944_028680_033EFD_700F/measurement/iw-vh.rtc.tiff",
+        "vv": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2019/8/22/IW/DV/S1A_IW_GRDH_1SDV_20190822T094919_20190822T094944_028680_033EFD_700F/measurement/iw-vv.rtc.tiff"
+      }
+    },
+    {
+      "id": "S1A_IW_GRDH_1SDV_20200828T094926_20200828T094951_034105_03F5D2_rtc",
+      "date": "2020-08-28",
+      "orbit": 83,
+      "collection": "sentinel-1-rtc",
+      "assets": {
+        "vh": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2020/8/28/IW/DV/S1A_IW_GRDH_1SDV_20200828T094926_20200828T094951_034105_03F5D2_2131/measurement/iw-vh.rtc.tiff",
+        "vv": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2020/8/28/IW/DV/S1A_IW_GRDH_1SDV_20200828T094926_20200828T094951_034105_03F5D2_2131/measurement/iw-vv.rtc.tiff"
+      }
+    },
+    {
+      "id": "S1A_IW_GRDH_1SDV_20210823T094931_20210823T094956_039355_04A5ED_rtc",
+      "date": "2021-08-23",
+      "orbit": 83,
+      "collection": "sentinel-1-rtc",
+      "assets": {
+        "vh": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2021/8/23/IW/DV/S1A_IW_GRDH_1SDV_20210823T094931_20210823T094956_039355_04A5ED_299F/measurement/iw-vh.rtc.tiff",
+        "vv": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2021/8/23/IW/DV/S1A_IW_GRDH_1SDV_20210823T094931_20210823T094956_039355_04A5ED_299F/measurement/iw-vv.rtc.tiff"
+      }
+    },
+    {
+      "id": "S1A_IW_GRDH_1SDV_20220830T094938_20220830T095003_044780_0558F3_rtc",
+      "date": "2022-08-30",
+      "orbit": 83,
+      "collection": "sentinel-1-rtc",
+      "assets": {
+        "vh": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2022/8/30/IW/DV/S1A_IW_GRDH_1SDV_20220830T094938_20220830T095003_044780_0558F3_DB0C/measurement/iw-vh.rtc.tiff",
+        "vv": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2022/8/30/IW/DV/S1A_IW_GRDH_1SDV_20220830T094938_20220830T095003_044780_0558F3_DB0C/measurement/iw-vv.rtc.tiff"
+      }
+    },
+    {
+      "id": "S1A_IW_GRDH_1SDV_20220911T094939_20220911T095004_044955_055ECD_rtc",
+      "date": "2022-09-11",
+      "orbit": 83,
+      "collection": "sentinel-1-rtc",
+      "assets": {
+        "vh": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2022/9/11/IW/DV/S1A_IW_GRDH_1SDV_20220911T094939_20220911T095004_044955_055ECD_A307/measurement/iw-vh.rtc.tiff",
+        "vv": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2022/9/11/IW/DV/S1A_IW_GRDH_1SDV_20220911T094939_20220911T095004_044955_055ECD_A307/measurement/iw-vv.rtc.tiff"
+      }
+    }
+  ],
+  "optical": [
+    {
+      "id": "S2A_MSIL2A_20190814T142801_R053_T20LMQ_20201005T001439",
+      "date": "2019-08-14",
+      "collection": "sentinel-2-l2a",
+      "assets": {
+        "visual": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/20/L/MQ/2019/08/14/S2A_MSIL2A_20190814T142801_N0212_R053_T20LMQ_20201005T001439.SAFE/GRANULE/L2A_T20LMQ_A021643_20190814T142756/IMG_DATA/R10m/T20LMQ_20190814T142801_TCI_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/20/L/MQ/2019/08/14/S2A_MSIL2A_20190814T142801_N0212_R053_T20LMQ_20201005T001439.SAFE/GRANULE/L2A_T20LMQ_A021643_20190814T142756/IMG_DATA/R20m/T20LMQ_20190814T142801_SCL_20m.tif"
+      },
+      "validCasePct": 99.9,
+      "validPatchPct": 100.0
+    },
+    {
+      "id": "S2B_MSIL2A_20220823T142709_R053_T20LMQ_20240705T151500",
+      "date": "2022-08-23",
+      "collection": "sentinel-2-l2a",
+      "assets": {
+        "visual": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/20/L/MQ/2022/08/23/S2B_MSIL2A_20220823T142709_N0510_R053_T20LMQ_20240705T151500.SAFE/GRANULE/L2A_T20LMQ_A028536_20220823T143247/IMG_DATA/R10m/T20LMQ_20220823T142709_TCI_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/20/L/MQ/2022/08/23/S2B_MSIL2A_20220823T142709_N0510_R053_T20LMQ_20240705T151500.SAFE/GRANULE/L2A_T20LMQ_A028536_20220823T143247/IMG_DATA/R20m/T20LMQ_20220823T142709_SCL_20m.tif"
+      },
+      "validCasePct": 99.9,
+      "validPatchPct": 96.1
+    }
+  ],
+  "dem": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S10_00_W064_00_DEM/Copernicus_DSM_COG_10_S10_00_W064_00_DEM.tif",
+  "title": "Rond\u00f4nia, Brazil",
+  "width": 1100,
+  "height": 650,
+  "widthM": 22000.0,
+  "heightM": 13000.0,
+  "pixelM": 20.0,
+  "threshold": -3.5,
+  "minimumAreaHa": 0.96,
+  "forestValidHa": 6404.2,
+  "patches": [
+    {
+      "id": "patch",
+      "title": "Possible disturbance",
+      "x": 0.5049426301853487,
+      "y": 0.18922330097087378,
+      "latitude": -9.6106,
+      "longitude": -63.79189,
+      "areaHa": 8.24,
+      "referencePct": 100.0,
+      "steepPct": 0.0,
+      "elevation": [
+        144,
+        175
+      ],
+      "series": [
+        {
+          "delta": 0.0,
+          "flaggedHa": 0.0
+        },
+        {
+          "delta": -0.59,
+          "flaggedHa": 0.0
+        },
+        {
+          "delta": -0.61,
+          "flaggedHa": 0.0
+        },
+        {
+          "delta": -6.33,
+          "flaggedHa": 8.24
+        },
+        {
+          "delta": -4.44,
+          "flaggedHa": 8.24
+        }
+      ]
+    },
+    {
+      "id": "control",
+      "title": "Stable forest comparison",
+      "x": 0.5831818181818181,
+      "y": 0.25461538461538463,
+      "latitude": -9.61832,
+      "longitude": -63.77622,
+      "areaHa": 7.88,
+      "referencePct": 0.0,
+      "steepPct": 0.0,
+      "elevation": [
+        113,
+        129
+      ],
+      "series": [
+        {
+          "delta": 0.0,
+          "flaggedHa": 0.0
+        },
+        {
+          "delta": 0.02,
+          "flaggedHa": 0.0
+        },
+        {
+          "delta": 0.23,
+          "flaggedHa": 0.0
+        },
+        {
+          "delta": -0.13,
+          "flaggedHa": 0.0
+        },
+        {
+          "delta": 0.26,
+          "flaggedHa": 0.0
+        }
+      ]
+    }
+  ],
+  "stats": [
+    {
+      "areaHa": 0.0,
+      "newHa": 0.0
+    },
+    {
+      "areaHa": 2.64,
+      "newHa": 2.64
+    },
+    {
+      "areaHa": 22.6,
+      "newHa": 22.6
+    },
+    {
+      "areaHa": 102.72,
+      "newHa": 102.0
+    },
+    {
+      "areaHa": 78.04,
+      "newHa": 35.68
+    }
+  ],
+  "baselineForest": "Hansen Global Forest Change v1.12, tree cover \u226530% in 2000, excluding mapped loss through 2019.",
+  "reference": "Hansen Global Forest Change v1.12, 2020\u20132022 annual tree-cover loss.",
+  "gridTransform": [
+    402000.0,
+    20.0,
+    0.0,
+    8940000.0,
+    0.0,
+    -20.0
+  ]
+}
