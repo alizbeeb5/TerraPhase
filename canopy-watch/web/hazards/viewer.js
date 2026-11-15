@@ -3,7 +3,9 @@ import { mountControls } from '../comparison/controls.js';
 import { mountComparisonShell } from '../comparison/workspace.js';
 import { mountEventReport } from '../comparison/report.js';
 import { drawTerrain } from '../comparison/terrain.js';
+import { outlookButton } from '../comparison/map-outlook.js';
 import { mountHazardOutlook } from './outlook.js';
+import { drawMapMarkers, mountMapLegend } from './map-outlook.js';
 
 const $ = id => document.getElementById(id);
 const dates = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeZone: 'UTC' });
@@ -58,7 +60,7 @@ function setupShell(event, data) {
   $('method-text').textContent = 'The passes share a repeat track and a common map grid. Linear power is averaged to the display grid before conversion to dB. ' + data.limits;
 }
 
-function makeReport(event, data, before, after, replay) {
+function makeReport(event, data, before, after, replay, mapOutlook) {
   return {
     label: event.name, scope: 'Whole event',
     sections: [
@@ -73,12 +75,13 @@ function makeReport(event, data, before, after, replay) {
       'Elevation source: ' + data.terrainSource + '.',
       ...(data.reference ? [data.reference.label + ' · ' + data.reference.dates.join(' → ') + '. ' + data.reference.legend] : []),
       ...(replay ? [replay.model + ' · ' + replay.horizonMinutes + '-minute historical replay at ' + replay.location + '.'] : []),
+      ...(mapOutlook ? [mapOutlook.note, ...mapOutlook.markers.map(marker => marker.name + ' · ' + marker.detail)] : []),
     ],
     provenance: [...before.sources, ...after.sources],
     links: [[data.record.label, data.record.url],
       ...before.sources.map(source => ['Sentinel-1 scene · ' + source.date, source.source]),
       ...after.sources.map(source => ['Sentinel-1 scene · ' + source.date, source.source]),
-      ...(replay ? [['USGS station ' + replay.station, replay.stationUrl]] : [])],
+      ...(mapOutlook?.sources ?? [])],
   };
 }
 
@@ -90,11 +93,12 @@ export async function mountHazard(event) {
   const { grid, scenes } = data;
   const before = scenes[0];
   const after = scenes.at(-1);
-  const [terrain, base, reference, replay, lastRadar, lastChange] = await Promise.all([
+  const [terrain, base, reference, replay, lastRadar, lastChange, mapSites] = await Promise.all([
     readJson(data.terrainPath), loadImage(before.path, grid),
     data.reference && loadImage(data.reference.path, grid),
     event.capabilities.forecast && readJson(event.manifestPath.replace('comparison.json', 'outlook.json')).catch(() => null),
     loadImage(after.path, grid), loadImage(after.changePath, grid),
+    readJson('/hazards/map-sites.json').catch(() => null),
   ]);
   setupShell(event, data);
   const setReport = mountEventReport(event.id);
@@ -104,16 +108,32 @@ export async function mountHazard(event) {
   const state = {
     layout: 'split', mode: 'radar', extent: full, after, images: { before: base, after: lastRadar, change: lastChange },
   };
+  const mapOutlook = mapSites?.[event.id];
+  const mapLegend = mapOutlook && mountMapLegend(document.querySelector('.comparison-toolbar'), mapOutlook, replay, draw);
+  let showOutlook = false;
+  if (mapOutlook) {
+    const toggle = outlookButton(document.querySelector('.stage-head .segmented'), active => {
+      showOutlook = active;
+      mapLegend.panel.hidden = !active;
+      toggle.setAttribute('aria-pressed', String(active));
+      if (active) {
+        state.extent = full;
+        if (state.mode === 'radar') state.layout = 'change';
+      }
+      draw();
+    });
+  }
   const dim = new Intl.NumberFormat('en', { maximumFractionDigits: 1 });
   const temporary = document.createElement('canvas');
   temporary.width = grid.width;
   temporary.height = grid.height;
 
-  function referenceView() {
+  function terrainTexture(drape) {
     const context = temporary.getContext('2d');
     context.clearRect(0, 0, grid.width, grid.height);
-    context.drawImage(state.images.after, 0, 0);
-    context.drawImage(reference, 0, 0);
+    context.drawImage(state.images[drape === 'reference' ? 'after' : drape], 0, 0);
+    if (drape === 'reference') context.drawImage(reference, 0, 0);
+    if (showOutlook) drawMapMarkers(context, mapOutlook, grid, full, mapLegend.readout());
     return temporary;
   }
 
@@ -147,7 +167,7 @@ export async function mountHazard(event) {
     $('backscatter-scale').textContent = !isTerrain ? 'Before and after share ' + data.radarRange.join(' to ') + ' dB.' : '';
     if (isTerrain) {
       terrainCanvas.setAttribute('aria-label', (drape === 'reference' ? data.reference.label : drape) + ' draped on elevation');
-      drawTerrain(terrainCanvas, drape === 'reference' ? referenceView() : state.images[drape],
+      drawTerrain(terrainCanvas, drape === 'reference' || showOutlook ? terrainTexture(drape) : state.images[drape],
         terrain, grid, Number($('rotation').value), Number($('exaggeration').value));
       return;
     }
@@ -181,6 +201,7 @@ export async function mountHazard(event) {
         ctx.clip();
         paint(state.images.after);
         if (showReference) paint(reference);
+        if (showOutlook) drawMapMarkers(ctx, mapOutlook, grid, extent, mapLegend.readout());
         ctx.restore();
         if (cut > 0 && cut < width) {
           ctx.fillStyle = '#fff';
@@ -193,6 +214,7 @@ export async function mountHazard(event) {
         ctx.globalAlpha = 1;
       }
       if (index !== 0 && showReference) paint(reference);
+      if (index !== 0 && showOutlook) drawMapMarkers(ctx, mapOutlook, grid, extent, mapLegend.readout());
     }
   }
 
@@ -270,7 +292,7 @@ export async function mountHazard(event) {
     setMetrics('metrics', [['Before coverage', before.coveragePct + '%'], ['After coverage', state.after.coveragePct + '%']]);
     $('grid').textContent = grid.width + ' × ' + grid.height + ' display grid · ' + grid.crs;
     $('evidence-status').textContent = data.record.finding;
-    const report = makeReport(event, data, before, state.after, replay);
+    const report = makeReport(event, data, before, state.after, replay, mapOutlook);
     setReport(report, state.after.date);
     $('provenance').replaceChildren(...report.links.map(([label, url]) => {
       const link = document.createElement('a');

@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const assetPaths = ['/louisiana-screening.json', '/canopy-watch-louisiana.json', '/rondonia/comparison.json', '/louisiana/outlook.json',
   '/drought/north-florida.json', '/drought/north-florida-outlook.json', '/hazards/krasheninnikov-eruption/comparison.json',
-  '/hazards/guadalupe-river-flood/comparison.json', '/hazards/guadalupe-river-flood/outlook.json'];
+  '/hazards/guadalupe-river-flood/comparison.json', '/hazards/guadalupe-river-flood/outlook.json', '/hazards/map-sites.json'];
 const ASSETS = Object.fromEntries(await Promise.all(assetPaths.map(async path => [path,
   ['application/json', (await readFile(new URL('../web' + path, import.meta.url))).toString('base64')]])));
 const screening = (await readFile(new URL('../web/screening.js', import.meta.url), 'utf8')).replace(/^export /gm, '');
@@ -130,6 +130,7 @@ test('hazard reports verify the chosen date and use packaged evidence and outloo
   const evidence = JSON.parse(payload.input);
   assert.equal(evidence.topic, 'hazard');
   assert.equal(evidence.outlook.kind, 'monitoring');
+  assert.equal(evidence.map.kind, 'monitoring');
   assert.equal(evidence.acquisitions[1].date, selection.comparisonDate);
   assert.notEqual(evidence.radarChange.medianDb, selection.radarChange.medianDb);
   assert.match(payload.instructions, /Do not predict earthquakes or eruptions/);

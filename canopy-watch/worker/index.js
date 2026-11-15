@@ -95,6 +95,8 @@ function hazardEvidence(eventId, comparisonDate) {
   if (!after) return null;
   const replayPath = root + '/outlook.json';
   const replay = Object.hasOwn(ASSETS, replayPath) ? JSON.parse(assetText(replayPath)) : null;
+  const mapPath = '/hazards/map-sites.json';
+  const map = Object.hasOwn(ASSETS, mapPath) ? JSON.parse(assetText(mapPath))[eventId] : null;
   return {
     topic: 'hazard', reportScope: 'event', event: eventId, hazardType: data.type,
     sensor: data.sensor,
@@ -106,6 +108,7 @@ function hazardEvidence(eventId, comparisonDate) {
     limitations: data.limits,
     verification: data.verification,
     outlook: data.outlook,
+    map: map && { kind: map.kind, note: map.note, locations: map.markers.map(({ name, detail }) => ({ name, detail })) },
     replay: replay && { location: replay.location, horizonMinutes: replay.horizonMinutes, model: replay.model,
       test: replay.heldOut, limitations: 'Historical gauge-only replay. It cannot predict flood extent or support emergency use.' },
   };

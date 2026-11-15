@@ -1,4 +1,6 @@
 import { renderDroughtReport, renderRainfallOutlook } from './analysis.js';
+import { outlookButton } from '../comparison/map-outlook.js';
+import { mountDivisionMap } from './map-outlook.js';
 
 function node(tag, text, parent) {
   const element = document.createElement(tag); if (text != null) element.textContent = text;
@@ -19,10 +21,11 @@ export async function mountDrought(root, event) {
     const rain = manifest.layers.find(layer => layer.id === 'precipitation-anomaly');
     if (!radar || !rain) throw Error('Missing drought evidence layers');
     const browse = radar.presentation === 'official-browse';
-    const [comparison, outlook] = await Promise.all([
+    const [comparison, outlook, divisions] = await Promise.all([
       browse ? null : load(manifest.comparisonPath),
       load(event.manifestPath.replace(/\.json$/, '-outlook.json')).then(value =>
         value.schema === 'terraphase-rainfall-outlook/v1' && value.eventId === event.id ? value : null).catch(() => null),
+      load('/drought/climate-divisions.json').catch(() => null),
     ]);
     const workspace = node('div', null, root);
     workspace.id = 'comparison';
@@ -40,7 +43,7 @@ export async function mountDrought(root, event) {
     node('summary', 'Evidence status and limits', limitations);
     const list = node('ul', null, limitations);
     manifest.limitations.forEach(text => node('li', text, list));
-    showRadar(stage, radar, comparison);
+    showRadar(stage, radar, comparison, event, outlook, divisions);
     renderDroughtReport(stage, event, manifest, radar, rain, browse ? radar.scenes : comparison.scenes, outlook);
     renderRainfallOutlook(evidence, outlook);
     const section = node('section', null, evidence);
@@ -62,7 +65,7 @@ export async function mountDrought(root, event) {
 }
 
 
-function showRadar(root, radar, comparison) {
+function showRadar(root, radar, comparison, event, outlook, divisions) {
   const browse = radar.presentation === 'official-browse';
   const scenes = browse ? radar.scenes : comparison.scenes;
   const bands = Object.keys(browse ? scenes[0].bands : comparison.layers);
@@ -155,15 +158,22 @@ function showRadar(root, radar, comparison) {
 
   const tools = node('div', null, section);
   tools.className = 'drought-tools';
-  function setLayout(showSwipe) {
-    splitButton.setAttribute('aria-pressed', String(!showSwipe));
-    swipeButton.setAttribute('aria-pressed', String(showSwipe));
-    panels.hidden = tools.hidden = showSwipe;
-    swipe.hidden = !showSwipe;
+  const map = outlook && divisions && mountDivisionMap(section, event, outlook, divisions);
+  const mapButton = map && outlookButton(group, active => setLayout(active ? 'outlook' : 'split'));
+  function setLayout(layout) {
+    splitButton.setAttribute('aria-pressed', String(layout === 'split'));
+    swipeButton.setAttribute('aria-pressed', String(layout === 'swipe'));
+    panels.hidden = tools.hidden = layout !== 'split';
+    swipe.hidden = layout !== 'swipe';
+    controls.hidden = layout === 'outlook';
+    if (map) {
+      map.hidden = layout !== 'outlook';
+      mapButton.setAttribute('aria-pressed', String(!map.hidden));
+    }
   }
-  splitButton.onclick = () => setLayout(false);
-  swipeButton.onclick = () => setLayout(true);
-  setLayout(false);
+  splitButton.onclick = () => setLayout('split');
+  swipeButton.onclick = () => setLayout('swipe');
+  setLayout('split');
   for (const [text, factor] of [['Zoom in', 1.5], ['Zoom out', 1 / 1.5], ['Reset zoom', 0]]) {
     const button = node('button', text, tools);
     button.type = 'button';

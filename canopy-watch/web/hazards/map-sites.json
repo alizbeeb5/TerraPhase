@@ -1,0 +1,45 @@
+{
+  "guadalupe-river-flood": {
+    "kind": "gauge",
+    "label": "Historical river stage at Kerrville",
+    "note": "The one-hour model is evaluated at this gauge. The map point represents a stage forecast, with no modeled flood extent.",
+    "markers": [
+      { "coordinates": [-99.163375, 30.053266], "name": "Kerrville gauge", "detail": "USGS station 08166200" }
+    ],
+    "sources": [["USGS Kerrville gauge", "https://waterdata.usgs.gov/monitoring-location/USGS-08166200/"]]
+  },
+  "hubbard-landslides": {
+    "kind": "monitoring",
+    "label": "Glacier monitoring sites",
+    "note": "These reference points locate nearby slopes and glacier runouts for repeat checks. The points mark landmarks used to find the area in NASA imagery.",
+    "markers": [
+      { "coordinates": [-139.78417, 60.53139], "name": "Mount King George", "detail": "Review nearby slopes and the glacier below them for new debris." },
+      { "coordinates": [-140.21423, 60.60669], "name": "McArthur Peak", "detail": "Check whether deposits visible in the radar pair persist on a later pass." }
+    ],
+    "sources": [
+      ["NASA Hubbard Glacier comparison", "https://science.nasa.gov/earth/earth-observatory/landslide-and-avalanche-debris-litter-hubbard-glacier/"],
+      ["Yukon place-name coordinates", "https://yukonplacenames.ca/wp-content/uploads/2018/09/GAZETTEER-OF-YUKON-2018.pdf"]
+    ]
+  },
+  "krasheninnikov-eruption": {
+    "kind": "monitoring",
+    "label": "Lava-flow monitoring direction",
+    "note": "The arrow indicates where the published radar sequence shows lava spreading from the northern crater. Its length is schematic. If effusion continues, compare new imagery in that direction.",
+    "markers": [
+      { "coordinates": [160.27, 54.596], "name": "Krasheninnikov reference point", "detail": "Monitor the eastern flow margin. Arrow shows the observed eastward direction.", "heading": 80 }
+    ],
+    "sources": [
+      ["NASA NISAR eruption sequence", "https://svs.gsfc.nasa.gov/5675"],
+      ["Smithsonian Global Volcanism Program", "https://volcano.si.edu/volcano.cfm?vn=300190"]
+    ]
+  },
+  "la-guaira-earthquakes": {
+    "kind": "monitoring",
+    "label": "Post-earthquake monitoring site",
+    "note": "The site marks where to check repeat radar observations for continued ground movement. The NISAR layer shows measured June 2026 line-of-sight displacement.",
+    "markers": [
+      { "coordinates": [-66.99122, 10.60119], "name": "Maiquetía airport area", "detail": "NASA identified the section near the airport as an area of significant displacement. Compare with a later interferogram." }
+    ],
+    "sources": [["NASA NISAR earthquake analysis", "https://science.nasa.gov/earth/earth-observatory/where-venezuelas-earthquakes-shifted-the-ground/"]]
+  }
+}
