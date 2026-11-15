@@ -14,7 +14,7 @@ button:disabled{cursor:default}
 [hidden]{display:none!important}
 .top{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px var(--edge);border-bottom:1px solid var(--stroke);background:#fbfcf8}
 .brand{display:inline-flex;align-items:center;gap:4px;color:var(--ink);text-decoration:none;font-size:1.16rem;font-weight:770;white-space:nowrap}
-.brand>span:not(.brand-icon){color:var(--lime)}
+.brand-wordmark>span{color:var(--lime)}
 .brand-icon{display:grid;place-items:center;width:33px;height:33px;margin-right:7px;color:#246346;border:1px solid #bed3c0;border-radius:9px;background:#e6f0e6}
 .project{color:var(--muted);font-size:.79rem}
 main{padding:0 var(--edge);max-width:1560px;margin:auto}
