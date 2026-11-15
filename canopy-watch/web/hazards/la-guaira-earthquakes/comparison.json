@@ -1,0 +1,101 @@
+{
+  "id": "la-guaira-earthquakes",
+  "type": "earthquake",
+  "record": {
+    "label": "NASA ARIA · NISAR line-of-sight displacement maps",
+    "url": "https://gis.earthdata.nasa.gov/portal/home/item.html?id=1d972eab2bbd4098af71c0c61db083fc",
+    "finding": "NASA ARIA used repeat-pass NISAR interferometry to document displacement after the June 24, 2026 earthquakes. The displayed reference is the June 18–30 line-of-sight pair."
+  },
+  "limits": "Sentinel-1 VV change measures brightness. NISAR phase-based displacement measures motion along the radar look direction. The terrain base is static elevation.",
+  "verification": [
+    "Compare the displacement pattern with the other NISAR viewing geometries and independently reported shaking.",
+    "Use a later matched interferogram and ground measurements to check for postseismic movement."
+  ],
+  "outlook": {
+    "kind": "monitoring",
+    "summary": "Prioritize repeat observations along the observed coastal deformation and consult official aftershock information for updates.",
+    "condition": "Satellite radar cannot predict the timing, location or magnitude of the next earthquake."
+  },
+  "schema": "terraphase-hazard/v1",
+  "sensor": "Copernicus Sentinel-1 VV RTC",
+  "grid": {
+    "width": 700,
+    "height": 347,
+    "widthM": 125749,
+    "heightM": 62269,
+    "bounds": [
+      -67.78,
+      10.18,
+      -66.63,
+      10.74
+    ],
+    "crs": "EPSG:4326"
+  },
+  "radarRange": [
+    -26,
+    4
+  ],
+  "changeRange": [
+    -8,
+    8
+  ],
+  "scenes": [
+    {
+      "id": "S1A_IW_GRDH_1SDV_20260618T101642_20260618T101707_065022_0831F4_rtc",
+      "date": "2026-06-18",
+      "track": 25,
+      "orbit": "descending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20260618T101642_20260618T101707_065022_0831F4_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/6/18/IW/DV/S1A_IW_GRDH_1SDV_20260618T101642_20260618T101707_065022_0831F4_5FEA/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1A_IW_GRDH_1SDV_20260618T101642_20260618T101707_065022_0831F4_rtc",
+          "date": "2026-06-18",
+          "track": 25,
+          "orbit": "descending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20260618T101642_20260618T101707_065022_0831F4_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/6/18/IW/DV/S1A_IW_GRDH_1SDV_20260618T101642_20260618T101707_065022_0831F4_5FEA/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/la-guaira-earthquakes/radar-0.webp",
+      "coveragePct": 100.0
+    },
+    {
+      "id": "S1D_IW_GRDH_1SDV_20260625T101601_20260625T101626_003391_005F73_rtc",
+      "date": "2026-06-25",
+      "track": 25,
+      "orbit": "descending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260625T101601_20260625T101626_003391_005F73_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/6/25/IW/DV/S1D_IW_GRDH_1SDV_20260625T101601_20260625T101626_003391_005F73_DF66/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1D_IW_GRDH_1SDV_20260625T101601_20260625T101626_003391_005F73_rtc",
+          "date": "2026-06-25",
+          "track": 25,
+          "orbit": "descending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260625T101601_20260625T101626_003391_005F73_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/6/25/IW/DV/S1D_IW_GRDH_1SDV_20260625T101601_20260625T101626_003391_005F73_DF66/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/la-guaira-earthquakes/radar-1.webp",
+      "coveragePct": 100.0,
+      "changePath": "/hazards/la-guaira-earthquakes/change-1.webp",
+      "change": {
+        "coveragePct": 100.0,
+        "medianDb": -0.88
+      }
+    }
+  ],
+  "terrainPath": "/hazards/la-guaira-earthquakes/terrain.json",
+  "terrainSource": "Mapzen terrain tiles (AWS Open Data)",
+  "reference": {
+    "path": "/hazards/la-guaira-earthquakes/reference.webp",
+    "label": "NASA NISAR displacement",
+    "legend": "Radar line-of-sight displacement: blue −50 cm · gray 0 · red +50 cm. Colors saturate at the endpoints. The layer covers only part of the study area.",
+    "dates": [
+      "2026-06-18",
+      "2026-06-30"
+    ],
+    "source": "https://gis.earthdata.nasa.gov/portal/rest/services/DISASTERS_202606_EARTHQUAKE_VENEZUELA/202611_nisar_LOSDisplacement/ImageServer/exportImage?f=image&bbox=-67.78%2C10.18%2C-66.63%2C10.74&bboxSR=4326&imageSR=4326&size=700%2C347&adjustAspectRatio=false&format=tiff&interpolation=RSP_NearestNeighbor&mosaicRule=%7B%22mosaicMethod%22%3A+%22esriMosaicLockRaster%22%2C+%22lockRasterIds%22%3A+%5B2%5D%7D&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D"
+  }
+}

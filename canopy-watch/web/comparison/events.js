@@ -7,6 +7,23 @@ export const events = Object.freeze({
     center: { lat: 29.91354, lon: -90.28041 }, beforeDate: '2026-06-21', afterDate: '2026-09-01',
     type: 'forest-disturbance', capabilities: { comparison: true, forecast: false }, status: 'ready', manifestPath: '/canopy-watch-louisiana.json', path: '/canopy-watch-louisiana.json', band: 'HV', title: 'Louisiana, USA', defaultView: 'radar' }),
 });
+
+const hazards = [
+  { id: 'hubbard-landslides', type: 'landslide', name: 'Hubbard Glacier landslides', location: 'Yukon–Alaska border',
+    center: { lat: 60.35, lon: -139.62 }, beforeDate: '2025-11-28', afterDate: '2025-12-10' },
+  { id: 'krasheninnikov-eruption', type: 'volcano', name: 'Krasheninnikov eruption', location: 'Kamchatka, Russia',
+    center: { lat: 54.59, lon: 160.27 }, beforeDate: '2026-06-27', afterDate: '2026-08-14' },
+  { id: 'guadalupe-river-flood', type: 'flood', name: 'Guadalupe River flood', location: 'Texas Hill Country, USA',
+    center: { lat: 30.04, lon: -99.25 }, beforeDate: '2025-06-29', afterDate: '2025-07-11' },
+  { id: 'la-guaira-earthquakes', type: 'earthquake', name: 'La Guaira earthquakes', location: 'Northern Venezuela',
+    center: { lat: 10.52, lon: -67.14 }, beforeDate: '2026-06-18', afterDate: '2026-06-25' },
+].map(event => ({ ...event, workspace: 'hazard', status: 'ready',
+  capabilities: { comparison: true, forecast: event.type === 'flood', terrain: true },
+  evidenceLayers: ['radar-backscatter', 'radar-difference', 'terrain', ...(event.type === 'flood' ? ['surface-water', 'river-stage-replay']
+    : event.type === 'earthquake' ? ['radar-line-of-sight-displacement'] : [])],
+  manifestPath: '/hazards/' + event.id + '/comparison.json',
+}));
+
 export async function listEvents() {
   return structuredClone([...Object.values(events), {
     id: 'louisiana-drought', type: 'drought', name: 'Louisiana rainfall and radar',
@@ -29,7 +46,7 @@ export async function listEvents() {
     capabilities: { comparison: true, forecast: true, precipitationAnomaly: true, soilMoisture: false },
     evidenceLayers: ['gcov-browse', 'precipitation-anomaly', 'regional-rainfall-outlook'],
     manifestPath: '/drought/eastern-north-carolina.json'
-  }].map(event => ({ evidenceLayers: ['radar-backscatter', 'forest-reference'], ...event })));
+  }, ...hazards].map(event => ({ evidenceLayers: ['radar-backscatter', 'forest-reference'], ...event })));
 }
 export function filterEvents(events, type = 'all', query = '') {
   const key = value => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();

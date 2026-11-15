@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { listEvents, filterEvents, eventLink } from '../web/comparison/events.js';
 test('type and search intersect; accents and empty results work', async () => {
  const events=await listEvents();
- assert.equal(filterEvents(events,'all').length,5);
+ assert.equal(filterEvents(events,'all').length,9);
  assert.equal(filterEvents(events,'drought').length,3);
  assert.equal(filterEvents(events,'forest-disturbance').length,2);
  assert.deepEqual(filterEvents(events,'drought','Louisiana').map(e=>e.id),['louisiana-drought']);
@@ -20,7 +20,42 @@ test('deep links and back preserve type and search; old IDs still resolve',async
  assert.equal(link.searchParams.get('event'),event.id);assert.equal(link.searchParams.get('type'),'drought');
  const back=new URL(eventLink(event,link.searchParams,true),'https://example.test');
  assert.equal(back.searchParams.get('selected'),event.id);assert.equal(back.searchParams.get('q'),'Louisiana');
- assert.equal(back.searchParams.has('event'),false);assert.equal(event.capabilities.forecast,event.type==='drought');
+ assert.equal(back.searchParams.has('event'),false);assert.equal(event.capabilities.forecast,['drought','flood'].includes(event.type));
+ }
+});
+
+test('each hazard has local repeat-track radar, comparable dates, and an elevation grid', async () => {
+ const entries = (await listEvents()).filter(event => event.workspace === 'hazard');
+ assert.deepEqual(entries.map(entry => entry.type).sort(), ['earthquake', 'flood', 'landslide', 'volcano']);
+ const local = route => new URL('../web' + route, import.meta.url);
+ for (const event of entries) {
+  const data = JSON.parse(await readFile(local(event.manifestPath)));
+  assert.equal(data.id, event.id);
+  assert.equal(data.scenes[0].date, event.beforeDate);
+  assert.equal(data.scenes.at(-1).date, event.afterDate);
+  assert.equal(new Set(data.scenes.map(scene => scene.track + scene.orbit)).size, 1);
+  assert.equal(data.outlook.kind, event.capabilities.forecast ? 'model' : 'monitoring');
+  const terrain = JSON.parse(await readFile(local(data.terrainPath)));
+  assert.equal(terrain.elevation.length, terrain.size * terrain.size);
+  assert.ok(terrain.elevation.every(Number.isFinite));
+  for (const [index, scene] of data.scenes.entries()) {
+   assert.equal((await readFile(local(scene.path))).toString('ascii', 8, 12), 'WEBP');
+   if (index) {
+    assert.ok(scene.date > data.scenes[index - 1].date && scene.change.coveragePct > 60);
+    assert.equal((await readFile(local(scene.changePath))).toString('ascii', 8, 12), 'WEBP');
+   }
+  }
+  if (data.reference) assert.equal((await readFile(local(data.reference.path))).toString('ascii', 8, 12), 'WEBP');
+ }
+ const stage = JSON.parse(await readFile(local('/hazards/guadalupe-river-flood/outlook.json')));
+ assert.equal(stage.horizonMinutes, 60);
+ assert.ok(stage.heldOut.years[0] > stage.validation.years.at(-1));
+ assert.ok(stage.replay.some(row => row.predictedFt !== null && row.predictedFt !== row.persistenceFt));
+ for (let i = 4; i < stage.replay.length; i++) {
+  const row = stage.replay[i];
+  const prev = stage.replay[i - 4];
+  assert.equal(Date.parse(row.utc) - Date.parse(prev.utc), 3600000);
+  if (row.persistenceFt !== null) assert.equal(row.persistenceFt, prev.observedFt);
  }
 });
 test('real drought manifest has reproducible seasonal anomalies and honest units',async()=>{

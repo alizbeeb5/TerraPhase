@@ -1,0 +1,108 @@
+{
+  "id": "hubbard-landslides",
+  "type": "landslide",
+  "record": {
+    "label": "NASA Earth Observatory · NISAR images of Hubbard Glacier",
+    "url": "https://science.nasa.gov/earth/earth-observatory/landslide-and-avalanche-debris-litter-hubbard-glacier/",
+    "finding": "NISAR images from November 26 and December 8, 2025 show rock and ice debris on Hubbard Glacier after the December 6 earthquake."
+  },
+  "limits": "Terrain shadow, snow conditions and glacier movement can also change VV backscatter. The change map highlights backscatter differences across the radar footprint.",
+  "verification": [
+    "Cross-check visible debris near Mount King George and McArthur Peak with the published NISAR pair.",
+    "Use a later matched pass or cloud-free optical image to check whether the mapped debris persists."
+  ],
+  "outlook": {
+    "kind": "monitoring",
+    "summary": "Check mapped runouts and the flatter ice below steep slopes for persistent debris or new movement on future passes.",
+    "condition": "A slope-failure probability needs repeated mapped failures, snow and weather observations, and local validation."
+  },
+  "schema": "terraphase-hazard/v1",
+  "sensor": "Copernicus Sentinel-1 VV RTC",
+  "grid": {
+    "width": 700,
+    "height": 590,
+    "widthM": 83075,
+    "heightM": 70053,
+    "bounds": [
+      -140.44,
+      60.03,
+      -138.93,
+      60.66
+    ],
+    "crs": "EPSG:4326"
+  },
+  "radarRange": [
+    -26,
+    4
+  ],
+  "changeRange": [
+    -8,
+    8
+  ],
+  "scenes": [
+    {
+      "id": "S1A_IW_GRDH_1SDV_20251128T025507_20251128T025532_062072_07C433_rtc",
+      "date": "2025-11-28",
+      "track": 50,
+      "orbit": "ascending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20251128T025507_20251128T025532_062072_07C433_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2025/11/28/IW/DV/S1A_IW_GRDH_1SDV_20251128T025507_20251128T025532_062072_07C433_1DAF/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1A_IW_GRDH_1SDV_20251128T025507_20251128T025532_062072_07C433_rtc",
+          "date": "2025-11-28",
+          "track": 50,
+          "orbit": "ascending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20251128T025507_20251128T025532_062072_07C433_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2025/11/28/IW/DV/S1A_IW_GRDH_1SDV_20251128T025507_20251128T025532_062072_07C433_1DAF/measurement/iw-vv.rtc.tiff"
+        },
+        {
+          "id": "S1A_IW_GRDH_1SDV_20251128T025532_20251128T025557_062072_07C433_rtc",
+          "date": "2025-11-28",
+          "track": 50,
+          "orbit": "ascending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20251128T025532_20251128T025557_062072_07C433_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2025/11/28/IW/DV/S1A_IW_GRDH_1SDV_20251128T025532_20251128T025557_062072_07C433_905A/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/hubbard-landslides/radar-0.webp",
+      "coveragePct": 100.0
+    },
+    {
+      "id": "S1A_IW_GRDH_1SDV_20251210T025506_20251210T025531_062247_07CB11_rtc",
+      "date": "2025-12-10",
+      "track": 50,
+      "orbit": "ascending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20251210T025506_20251210T025531_062247_07CB11_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2025/12/10/IW/DV/S1A_IW_GRDH_1SDV_20251210T025506_20251210T025531_062247_07CB11_C83D/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1A_IW_GRDH_1SDV_20251210T025506_20251210T025531_062247_07CB11_rtc",
+          "date": "2025-12-10",
+          "track": 50,
+          "orbit": "ascending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20251210T025506_20251210T025531_062247_07CB11_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2025/12/10/IW/DV/S1A_IW_GRDH_1SDV_20251210T025506_20251210T025531_062247_07CB11_C83D/measurement/iw-vv.rtc.tiff"
+        },
+        {
+          "id": "S1A_IW_GRDH_1SDV_20251210T025531_20251210T025556_062247_07CB11_rtc",
+          "date": "2025-12-10",
+          "track": 50,
+          "orbit": "ascending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1A_IW_GRDH_1SDV_20251210T025531_20251210T025556_062247_07CB11_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2025/12/10/IW/DV/S1A_IW_GRDH_1SDV_20251210T025531_20251210T025556_062247_07CB11_C5EE/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/hubbard-landslides/radar-1.webp",
+      "coveragePct": 100.0,
+      "changePath": "/hazards/hubbard-landslides/change-1.webp",
+      "change": {
+        "coveragePct": 100.0,
+        "medianDb": 0.97
+      }
+    }
+  ],
+  "terrainPath": "/hazards/hubbard-landslides/terrain.json",
+  "terrainSource": "Mapzen terrain tiles (AWS Open Data)",
+  "reference": null
+}

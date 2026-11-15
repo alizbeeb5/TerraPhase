@@ -46,6 +46,14 @@ rainfall total below a historical percentile. It is not a drought probability, a
 or a location-specific prediction. Report what to verify with gauges, later scenes, or independent soil moisture,
 then give practical conditional follow-up steps. Use short sentences and cite the supplied agency and dates.`;
 
+const HAZARD_INSTRUCTIONS = `Write a satellite evidence report using only the supplied data. Cite dates and agency names
+provided in the input. Distinguish median radar brightness change over the valid footprint from the physical phenomenon.
+Distinguish observed surface water, measured radar line-of-sight displacement, and static terrain. The radar images and
+independent evidence can have different dates. Never invent affected areas, event probabilities, forecasts or official advice.
+Treat monitoring outlooks as conditional follow-up. The river-stage replay is historical at one gauge and does not show future
+flood extent. Do not predict earthquakes or eruptions. Give ordered verification steps and conditional follow-up actions based
+on the supplied evidence. Use short, plain-language sentences.`;
+
 async function interpretPatch(key, evidence) {
   const report = Boolean(evidence.reportScope);
   const response = await fetch('https://api.openai.com/v1/responses', {
@@ -54,7 +62,8 @@ async function interpretPatch(key, evidence) {
     signal: AbortSignal.timeout(30_000),
     body: JSON.stringify({
       model: MODEL, store: false, max_output_tokens: report ? 1300 : 700,
-      instructions: evidence.topic === 'drought' ? DROUGHT_INSTRUCTIONS : INSTRUCTIONS + (report ? REPORT_INSTRUCTIONS : ''),
+      instructions: ({ drought: DROUGHT_INSTRUCTIONS, hazard: HAZARD_INSTRUCTIONS })[evidence.topic]
+        ?? INSTRUCTIONS + (report ? REPORT_INSTRUCTIONS : ''),
       input: JSON.stringify(evidence),
       text: { format: { type: 'json_schema', name: 'patch_interpretation', strict: true, schema: report ? REPORT_SCHEMA : SCHEMA } },
     }),

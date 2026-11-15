@@ -4,6 +4,7 @@ import { events } from './comparison/events.js';
 import { validateComparison, commonMask, areaSummary, clampExtent, zoomExtent } from './comparison/core.js';
 import { mountControls } from './comparison/controls.js';
 import { mountComparisonShell } from './comparison/workspace.js';
+import { drawTerrain } from './comparison/terrain.js';
 import { mountReport, evidenceReport, applyAI, showReport, downloadReport } from './comparison/report.js';
 import { mountOutlook, loadOutlook, showOutlook, describeZone } from './comparison/outlook.js';
 
@@ -14,7 +15,6 @@ mountReport();
 mountOutlook(toggleOutlook, selectRiskZone);
 const maps = ['before-map', 'after-map', 'change-map'].map($);
 const canvas = $('overlay');
-const context = canvas.getContext('2d');
 const dates = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 const numbers = new Intl.NumberFormat('en', { maximumFractionDigits: 2 });
 const formatDate = value => dates.format(new Date(value));
@@ -212,7 +212,7 @@ function draw() {
     + (!terrain && state.referenceLayer && $('show-reference').checked ? ' · Purple mapped loss' : '')
     + (!terrain && showRisk ? ' · Dashed magenta: ' + state.outlook.targetYear + ' monitoring priority' : '') : 'Backscatter';
   if (terrain) {
-    drawTerrain(images[band][drape], data.terrain, data.grid);
+    drawTerrain(canvas, images[band][drape], data.terrain, data.grid, Number($('rotation').value), Number($('exaggeration').value));
     return;
   }
   const sources = mode === 'optical' ? state.optical : images[band];
@@ -269,51 +269,6 @@ function draw() {
   });
   if (state.layout === 'swipe') {
     maps[0].setAttribute('aria-label', 'Before left / after right. ' + $('before-date').textContent + ' → ' + $('after-date').textContent);
-  }
-}
-
-function drawTerrain(image, terrain, grid) {
-  canvas.width = 960;
-  canvas.height = 570;
-  const size = terrain.size;
-  const texture = document.createElement('canvas');
-  texture.width = size;
-  texture.height = size;
-  const tex = texture.getContext('2d');
-  tex.drawImage(image, 0, 0, size, size);
-  const rgba = tex.getImageData(0, 0, size, size).data;
-  const angle = Number($('rotation').value) * Math.PI / 180;
-  const scale = 650 / Math.hypot(grid.widthM, grid.heightM);
-  const center = (Math.min(...terrain.elevation) + Math.max(...terrain.elevation)) / 2;
-  const relief = Math.max(...terrain.elevation) - Math.min(...terrain.elevation);
-  const vertical = Math.min(scale * Number($('exaggeration').value), 330 / (relief || 1));
-  const c = Math.cos(angle);
-  const s = Math.sin(angle);
-  const points = terrain.elevation.map((height, i) => {
-    const x = (i % size / (size - 1) - .5) * grid.widthM * scale;
-    const y = (Math.floor(i / size) / (size - 1) - .5) * grid.heightM * scale;
-    const depth = x * s + y * c;
-    return { x: 480 + x * c - y * s, y: 290 + depth * .50 - (height - center) * vertical, depth };
-  });
-  const faces = [];
-  for (let j = 0; j < size - 1; j++) {
-    for (let i = 0; i < size - 1; i++) {
-      const k = j * size + i;
-      if (!rgba[k * 4 + 3]) continue;
-      const corners = [points[k], points[k + 1], points[k + size + 1], points[k + size]];
-      faces.push({ corners, depth: corners.reduce((sum, point) => sum + point.depth, 0), k });
-    }
-  }
-  faces.sort((a, b) => a.depth - b.depth);
-  for (const { corners, k } of faces) {
-    const base = k * 4;
-    context.fillStyle = context.strokeStyle = 'rgb(' + rgba.slice(base, base + 3).join(',') + ')';
-    context.beginPath();
-    context.moveTo(corners[0].x, corners[0].y);
-    corners.slice(1).forEach(point => context.lineTo(point.x, point.y));
-    context.closePath();
-    context.stroke();
-    context.fill();
   }
 }
 

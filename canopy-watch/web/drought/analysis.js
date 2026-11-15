@@ -1,4 +1,4 @@
-import { applyAI, downloadReport, mountReport, showReport } from '../comparison/report.js';
+import { mountEventReport } from '../comparison/report.js';
 
 const probability = number => Math.round(number * 100) + '%';
 const signed = number => (number > 0 ? '+' : '') + number.toFixed(1);
@@ -142,30 +142,5 @@ export function renderDroughtReport(parent, event, manifest, radar, rain, scenes
     <button class="primary" type="button" id="interpret-button"></button></div>
     <p id="interpret-status" role="status"></p><div id="interpret-result" hidden></div>`;
   parent.append(panel);
-  mountReport({ allowPatch: false });
-  const fallback = evidenceReport(event, manifest, radar, rain, scenes, outlook);
-  let report = fallback;
-  showReport(report);
-  panel.querySelector('#report-download').onclick = () => downloadReport(report, event.id);
-  const button = panel.querySelector('#interpret-button');
-  const status = panel.querySelector('#interpret-status');
-  button.onclick = async () => {
-    button.disabled = true;
-    status.textContent = 'Generating an evidence report…';
-    try {
-      const response = await fetch('/api/interpret', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId: event.id, scope: 'event' }),
-      });
-      const answer = await response.json();
-      if (!response.ok) throw Error(answer.error || 'The AI report could not be generated.');
-      report = applyAI(fallback, answer);
-      showReport(report);
-      status.textContent = 'AI report generated from event evidence.';
-    } catch (error) {
-      status.textContent = error.message + ' The evidence report is still available to download.';
-    } finally {
-      button.disabled = false;
-    }
-  };
+  mountEventReport(event.id)(evidenceReport(event, manifest, radar, rain, scenes, outlook));
 }

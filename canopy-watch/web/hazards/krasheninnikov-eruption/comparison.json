@@ -1,0 +1,167 @@
+{
+  "id": "krasheninnikov-eruption",
+  "type": "volcano",
+  "record": {
+    "label": "NASA Scientific Visualization Studio · NISAR eruption time series",
+    "url": "https://svs.gsfc.nasa.gov/5675",
+    "finding": "The published NISAR time series from December 2025 through August 2026 shows lava spreading east of Krasheninnikov's northern crater."
+  },
+  "limits": "Every selectable date is compared with the first displayed Sentinel-1 pass, which was acquired during the eruption. Snow, lava texture and terrain shadow affect radar brightness.",
+  "verification": [
+    "Compare the eastern flow margin across repeat passes and check the NISAR time series.",
+    "Cross-check any new boundary with a published volcanic activity assessment or thermal observations."
+  ],
+  "outlook": {
+    "kind": "monitoring",
+    "summary": "If effusion continues from the same vent, the active eastern flow margin is the first place to check for growth on the next matched pass.",
+    "condition": "A flow-reach forecast needs current vent activity, effusion rate, a fine DEM and a validated flow model."
+  },
+  "schema": "terraphase-hazard/v1",
+  "sensor": "Copernicus Sentinel-1 VV RTC",
+  "grid": {
+    "width": 694,
+    "height": 700,
+    "widthM": 28660,
+    "heightM": 28911,
+    "bounds": [
+      160.095,
+      54.475,
+      160.54,
+      54.735
+    ],
+    "crs": "EPSG:4326"
+  },
+  "radarRange": [
+    -26,
+    4
+  ],
+  "changeRange": [
+    -8,
+    8
+  ],
+  "scenes": [
+    {
+      "id": "S1D_IW_GRDH_1SDV_20260627T193947_20260627T194012_003426_0060A0_rtc",
+      "date": "2026-06-27",
+      "track": 60,
+      "orbit": "descending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260627T193947_20260627T194012_003426_0060A0_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/6/27/IW/DV/S1D_IW_GRDH_1SDV_20260627T193947_20260627T194012_003426_0060A0_FB14/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1D_IW_GRDH_1SDV_20260627T193947_20260627T194012_003426_0060A0_rtc",
+          "date": "2026-06-27",
+          "track": 60,
+          "orbit": "descending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260627T193947_20260627T194012_003426_0060A0_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/6/27/IW/DV/S1D_IW_GRDH_1SDV_20260627T193947_20260627T194012_003426_0060A0_FB14/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/krasheninnikov-eruption/radar-0.webp",
+      "coveragePct": 100.0
+    },
+    {
+      "id": "S1D_IW_GRDH_1SDV_20260709T193947_20260709T194012_003601_006687_rtc",
+      "date": "2026-07-09",
+      "track": 60,
+      "orbit": "descending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260709T193947_20260709T194012_003601_006687_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/7/9/IW/DV/S1D_IW_GRDH_1SDV_20260709T193947_20260709T194012_003601_006687_87B8/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1D_IW_GRDH_1SDV_20260709T193947_20260709T194012_003601_006687_rtc",
+          "date": "2026-07-09",
+          "track": 60,
+          "orbit": "descending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260709T193947_20260709T194012_003601_006687_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/7/9/IW/DV/S1D_IW_GRDH_1SDV_20260709T193947_20260709T194012_003601_006687_87B8/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/krasheninnikov-eruption/radar-1.webp",
+      "coveragePct": 100.0,
+      "changePath": "/hazards/krasheninnikov-eruption/change-1.webp",
+      "change": {
+        "coveragePct": 100.0,
+        "medianDb": 0.74
+      }
+    },
+    {
+      "id": "S1D_IW_GRDH_1SDV_20260721T193948_20260721T194013_003776_006C7D_rtc",
+      "date": "2026-07-21",
+      "track": 60,
+      "orbit": "descending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260721T193948_20260721T194013_003776_006C7D_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/7/21/IW/DV/S1D_IW_GRDH_1SDV_20260721T193948_20260721T194013_003776_006C7D_BBE0/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1D_IW_GRDH_1SDV_20260721T193948_20260721T194013_003776_006C7D_rtc",
+          "date": "2026-07-21",
+          "track": 60,
+          "orbit": "descending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260721T193948_20260721T194013_003776_006C7D_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/7/21/IW/DV/S1D_IW_GRDH_1SDV_20260721T193948_20260721T194013_003776_006C7D_BBE0/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/krasheninnikov-eruption/radar-2.webp",
+      "coveragePct": 100.0,
+      "changePath": "/hazards/krasheninnikov-eruption/change-2.webp",
+      "change": {
+        "coveragePct": 100.0,
+        "medianDb": 1.65
+      }
+    },
+    {
+      "id": "S1D_IW_GRDH_1SDV_20260802T193949_20260802T194014_003951_00729D_rtc",
+      "date": "2026-08-02",
+      "track": 60,
+      "orbit": "descending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260802T193949_20260802T194014_003951_00729D_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/8/2/IW/DV/S1D_IW_GRDH_1SDV_20260802T193949_20260802T194014_003951_00729D_DD7B/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1D_IW_GRDH_1SDV_20260802T193949_20260802T194014_003951_00729D_rtc",
+          "date": "2026-08-02",
+          "track": 60,
+          "orbit": "descending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260802T193949_20260802T194014_003951_00729D_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/8/2/IW/DV/S1D_IW_GRDH_1SDV_20260802T193949_20260802T194014_003951_00729D_DD7B/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/krasheninnikov-eruption/radar-3.webp",
+      "coveragePct": 100.0,
+      "changePath": "/hazards/krasheninnikov-eruption/change-3.webp",
+      "change": {
+        "coveragePct": 100.0,
+        "medianDb": 1.19
+      }
+    },
+    {
+      "id": "S1D_IW_GRDH_1SDV_20260814T193949_20260814T194014_004126_0078A6_rtc",
+      "date": "2026-08-14",
+      "track": 60,
+      "orbit": "descending",
+      "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260814T193949_20260814T194014_004126_0078A6_rtc",
+      "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/8/14/IW/DV/S1D_IW_GRDH_1SDV_20260814T193949_20260814T194014_004126_0078A6_8FED/measurement/iw-vv.rtc.tiff",
+      "sources": [
+        {
+          "id": "S1D_IW_GRDH_1SDV_20260814T193949_20260814T194014_004126_0078A6_rtc",
+          "date": "2026-08-14",
+          "track": 60,
+          "orbit": "descending",
+          "source": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1D_IW_GRDH_1SDV_20260814T193949_20260814T194014_004126_0078A6_rtc",
+          "asset": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2026/8/14/IW/DV/S1D_IW_GRDH_1SDV_20260814T193949_20260814T194014_004126_0078A6_8FED/measurement/iw-vv.rtc.tiff"
+        }
+      ],
+      "path": "/hazards/krasheninnikov-eruption/radar-4.webp",
+      "coveragePct": 100.0,
+      "changePath": "/hazards/krasheninnikov-eruption/change-4.webp",
+      "change": {
+        "coveragePct": 100.0,
+        "medianDb": 1.43
+      }
+    }
+  ],
+  "terrainPath": "/hazards/krasheninnikov-eruption/terrain.json",
+  "terrainSource": "Mapzen terrain tiles (AWS Open Data)",
+  "reference": null
+}
