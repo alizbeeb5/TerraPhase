@@ -16,3 +16,6 @@
 .drought-workspace caption { text-align:left; margin-bottom:.8rem; }
 .drought-workspace a { color:#215e46; text-decoration:underline; }
 @media(max-width:640px) { .drought-panels { grid-template-columns:1fr; } .drought-workspace table { font-size:.8rem; } }
+
+.browse-viewport { height:clamp(250px,42vw,565px); }
+.drought-scene-links { display:flex; flex-wrap:wrap; gap:.35rem .9rem; margin:.6rem 0; font-size:.9rem; }

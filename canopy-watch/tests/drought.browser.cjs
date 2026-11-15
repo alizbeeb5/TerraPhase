@@ -7,7 +7,7 @@ try{
  const base='http://127.0.0.1:3012';
  await page.goto(base+'/?type=drought');
  await page.locator('#site-list li:not([hidden])').waitFor();
- assert.equal(await page.locator('#site-list li:not([hidden])').count(),1);
+ assert.equal(await page.locator('#site-list li:not([hidden])').count(),3);
  await page.locator('#site-list').getByRole('button',{name:/Louisiana rainfall and radar/}).click();
  await page.locator('#explore-link').click();
  await page.getByRole('heading',{name:'Seasonal precipitation anomaly · mm'}).waitFor();
@@ -35,6 +35,13 @@ try{
  }
  await page.goto(base+'/?event=louisiana-drought&type=drought');
  await page.getByRole('heading',{name:'Seasonal precipitation anomaly · mm'}).waitFor();
+ for(const id of ['north-florida-drought','eastern-north-carolina-drought']){
+  await page.goto(base+'/?event='+id+'&type=drought');
+  await page.getByRole('heading',{name:'NISAR radar previews'}).waitFor();
+  await page.waitForFunction(()=>[...document.querySelectorAll('.radar-viewport img')].every(i=>i.complete&&i.naturalWidth>0));
+  await page.getByLabel('Radar polarization').selectOption('HH');
+  assert.ok((await page.locator('.radar-viewport img').first().getAttribute('src')).endsWith('-HH.webp'));
+ }
  assert.deepEqual(errors,[]);console.log('PASS drought routing, filtering, empty state, zoom, mobile, and both forest links');
 }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});

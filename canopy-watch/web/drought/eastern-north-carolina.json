@@ -1,0 +1,121 @@
+{
+  "schema": "terraphase-drought/v1",
+  "id": "eastern-north-carolina-drought",
+  "status": "provisional",
+  "limitations": [
+    "The independently rendered ASF browse images show full GCOV scenes. Display brightness may vary with image scaling.",
+    "The paired previews support visual inspection. Quantitative backscatter change and soil moisture require science data.",
+    "August–October totals show antecedent conditions at division scale. November was incomplete at packaging and is omitted."
+  ],
+  "layers": [
+    {
+      "id": "gcov",
+      "presentation": "official-browse",
+      "units": "display intensity",
+      "measurement": "Official GCOV backscatter browse imagery",
+      "resolution": "Resized whole-scene previews",
+      "source": "NASA / ISRO NISAR L2 GCOV · ASF DAAC",
+      "collection": "NISAR_L2_GCOV_V1",
+      "maturity": "Validated GCOV",
+      "dates": [
+        "2026-10-24",
+        "2026-11-05"
+      ],
+      "scenes": [
+        {
+          "id": "NISAR_L2_PR_GCOV_033_170_D_071_4005_DHDH_A_20261024T000224_20261024T000259_P05036_N_F_J_001",
+          "cmrId": "G4405630052-ASF",
+          "date": "2026-10-24T00:02:24.000Z",
+          "metadataUrl": "https://cmr.earthdata.nasa.gov/search/granules.json?concept_id=G4405630052-ASF",
+          "scienceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_170_D_071_4005_DHDH_A_20261024T000224_20261024T000259_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_170_D_071_4005_DHDH_A_20261024T000224_20261024T000259_P05036_N_F_J_001.h5",
+          "bands": {
+            "HH": {
+              "path": "/drought/eastern-north-carolina/G4405630052-ASF-HH.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_170_D_071_4005_DHDH_A_20261024T000224_20261024T000259_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_170_D_071_4005_DHDH_A_20261024T000224_20261024T000259_P05036_N_F_J_001_NATIVE_A_HHHH.png",
+              "sourceSha256": "5c758fe5c27540ca41b3b3fd8513931ca4fa84ecabc2962a10fddbbcd2b4c04b",
+              "width": 1120,
+              "height": 1104
+            },
+            "HV": {
+              "path": "/drought/eastern-north-carolina/G4405630052-ASF-HV.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_170_D_071_4005_DHDH_A_20261024T000224_20261024T000259_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_170_D_071_4005_DHDH_A_20261024T000224_20261024T000259_P05036_N_F_J_001_NATIVE_A_HVHV.png",
+              "sourceSha256": "f6c829ecc000ef9b30fd7dbe3c3609f85294e28d23f375ea9d635115523861a4",
+              "width": 1120,
+              "height": 1104
+            }
+          }
+        },
+        {
+          "id": "NISAR_L2_PR_GCOV_034_170_D_071_4005_DHDH_A_20261105T000225_20261105T000259_P05036_N_F_J_001",
+          "cmrId": "G4409297842-ASF",
+          "date": "2026-11-05T00:02:25.000Z",
+          "metadataUrl": "https://cmr.earthdata.nasa.gov/search/granules.json?concept_id=G4409297842-ASF",
+          "scienceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_170_D_071_4005_DHDH_A_20261105T000225_20261105T000259_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_170_D_071_4005_DHDH_A_20261105T000225_20261105T000259_P05036_N_F_J_001.h5",
+          "bands": {
+            "HH": {
+              "path": "/drought/eastern-north-carolina/G4409297842-ASF-HH.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_170_D_071_4005_DHDH_A_20261105T000225_20261105T000259_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_170_D_071_4005_DHDH_A_20261105T000225_20261105T000259_P05036_N_F_J_001_NATIVE_A_HHHH.png",
+              "sourceSha256": "cad4f448171ccb8142c24275ad5b6fb97bffb00e80298bcadabd623ac03d85b2",
+              "width": 1120,
+              "height": 1104
+            },
+            "HV": {
+              "path": "/drought/eastern-north-carolina/G4409297842-ASF-HV.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_170_D_071_4005_DHDH_A_20261105T000225_20261105T000259_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_170_D_071_4005_DHDH_A_20261105T000225_20261105T000259_P05036_N_F_J_001_NATIVE_A_HVHV.png",
+              "sourceSha256": "1b27460a8be8b4492c33702c6a548b037f1dd74fd191d6285eb14093f9e4604a",
+              "width": 1120,
+              "height": 1104
+            }
+          }
+        }
+      ],
+      "geometry": {
+        "track": 170,
+        "frame": 71,
+        "direction": "Descending",
+        "release": "P05036"
+      }
+    },
+    {
+      "id": "precipitation-anomaly",
+      "units": "mm",
+      "measurement": "Monthly precipitation minus the same calendar month's 1991–2020 mean",
+      "resolution": "NOAA North Carolina Central Coastal Plain climate division (3107) area mean",
+      "dates": [
+        "2026-08-01",
+        "2026-10-31"
+      ],
+      "source": "NOAA NCEI nClimDiv / Climate at a Glance",
+      "sourceUrl": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/3107/pcp/1/0/1991-2026.json?base_prd=true&begbaseyear=1991&endbaseyear=2020",
+      "sourceSha256": "77c863acdab0ff462a08717451be9f8d68acc6c34af16cbea61fdbe5fce864a7",
+      "rawPath": "/drought/noaa-3107-precipitation.json",
+      "baseline": "1991–2020 (30 observations per calendar month)",
+      "status": "observed",
+      "series": [
+        {
+          "month": "2026-08",
+          "precipitationMm": 109.474,
+          "normalMm": 158.936,
+          "anomalyMm": -49.462
+        },
+        {
+          "month": "2026-09",
+          "precipitationMm": 55.626,
+          "normalMm": 165.261,
+          "anomalyMm": -109.635
+        },
+        {
+          "month": "2026-10",
+          "precipitationMm": 62.484,
+          "normalMm": 94.513,
+          "anomalyMm": -32.029
+        }
+      ]
+    }
+  ],
+  "independentRecord": {
+    "label": "U.S. Drought Monitor · November 10, 2026",
+    "url": "https://droughtmonitor.unl.edu/services/data/summary/html/usdm_summary_20261110.html",
+    "scope": "The regional narrative documents worsening drought in eastern North Carolina five days after the second NISAR pass."
+  }
+}

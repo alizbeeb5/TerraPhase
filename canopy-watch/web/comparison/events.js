@@ -15,6 +15,20 @@ export async function listEvents() {
     capabilities: { comparison: true, forecast: false, precipitationAnomaly: true, soilMoisture: false },
     evidenceLayers: ['gamma0-backscatter', 'precipitation-anomaly'],
     manifestPath: '/drought/louisiana.json'
+  }, {
+    id: 'north-florida-drought', type: 'drought', name: 'North Florida drought and recovery',
+    location: 'Lower Santa Fe River basin, Florida, USA', center: { lat: 29.87, lon: -82.59 },
+    beforeDate: '2026-07-03', afterDate: '2026-09-13', status: 'provisional',
+    capabilities: { comparison: true, forecast: false, precipitationAnomaly: true, soilMoisture: false },
+    evidenceLayers: ['gcov-browse', 'precipitation-anomaly'],
+    manifestPath: '/drought/north-florida.json'
+  }, {
+    id: 'eastern-north-carolina-drought', type: 'drought', name: 'Eastern North Carolina drought',
+    location: 'Central Coastal Plain, North Carolina, USA', center: { lat: 35.34, lon: -77.93 },
+    beforeDate: '2026-10-24', afterDate: '2026-11-05', status: 'provisional',
+    capabilities: { comparison: true, forecast: false, precipitationAnomaly: true, soilMoisture: false },
+    evidenceLayers: ['gcov-browse', 'precipitation-anomaly'],
+    manifestPath: '/drought/eastern-north-carolina.json'
   }].map(event => ({ evidenceLayers: ['radar-backscatter', 'forest-reference'], ...event })));
 }
 export function filterEvents(events, type = 'all', query = '') {

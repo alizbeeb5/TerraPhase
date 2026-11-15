@@ -1,0 +1,127 @@
+{
+  "schema": "terraphase-drought/v1",
+  "id": "north-florida-drought",
+  "status": "provisional",
+  "limitations": [
+    "The independently rendered ASF browse images show full GCOV scenes. Display brightness may vary with image scaling.",
+    "The paired previews support visual inspection. Quantitative backscatter change and soil moisture require science data.",
+    "June–September totals provide regional context. June and part of July precede the first scene, and the September total extends beyond the second scene."
+  ],
+  "layers": [
+    {
+      "id": "gcov",
+      "presentation": "official-browse",
+      "units": "display intensity",
+      "measurement": "Official GCOV backscatter browse imagery",
+      "resolution": "Resized whole-scene previews",
+      "source": "NASA / ISRO NISAR L2 GCOV · ASF DAAC",
+      "collection": "NISAR_L2_GCOV_PROVISIONAL_V1",
+      "maturity": "Provisional GCOV",
+      "dates": [
+        "2026-07-03",
+        "2026-09-13"
+      ],
+      "scenes": [
+        {
+          "id": "NISAR_L2_PR_GCOV_024_098_D_074_4005_DHDH_A_20260703T001226_20260703T001302_P05023_N_F_J_001",
+          "cmrId": "G4245143313-ASF",
+          "date": "2026-07-03T00:12:26.000Z",
+          "metadataUrl": "https://cmr.earthdata.nasa.gov/search/granules.json?concept_id=G4245143313-ASF",
+          "scienceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_024_098_D_074_4005_DHDH_A_20260703T001226_20260703T001302_P05023_N_F_J_001/NISAR_L2_PR_GCOV_024_098_D_074_4005_DHDH_A_20260703T001226_20260703T001302_P05023_N_F_J_001.h5",
+          "bands": {
+            "HH": {
+              "path": "/drought/north-florida/G4245143313-ASF-HH.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_024_098_D_074_4005_DHDH_A_20260703T001226_20260703T001302_P05023_N_F_J_001/NISAR_L2_PR_GCOV_024_098_D_074_4005_DHDH_A_20260703T001226_20260703T001302_P05023_N_F_J_001_NATIVE_A_HHHH.png",
+              "sourceSha256": "5feb5f80d3d9b7043f2b1f745b1c6b9debf5c895b9d7ce0c4dd48e145c6256e9",
+              "width": 1120,
+              "height": 1099
+            },
+            "HV": {
+              "path": "/drought/north-florida/G4245143313-ASF-HV.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_024_098_D_074_4005_DHDH_A_20260703T001226_20260703T001302_P05023_N_F_J_001/NISAR_L2_PR_GCOV_024_098_D_074_4005_DHDH_A_20260703T001226_20260703T001302_P05023_N_F_J_001_NATIVE_A_HVHV.png",
+              "sourceSha256": "ad3777eea1610d192721ee7ab53297c4e0eb2edf793da587caf686c9445ff4af",
+              "width": 1120,
+              "height": 1099
+            }
+          }
+        },
+        {
+          "id": "NISAR_L2_PR_GCOV_030_098_D_074_4005_DHDH_A_20260913T001223_20260913T001259_P05023_N_F_J_001",
+          "cmrId": "G4311534924-ASF",
+          "date": "2026-09-13T00:12:23.000Z",
+          "metadataUrl": "https://cmr.earthdata.nasa.gov/search/granules.json?concept_id=G4311534924-ASF",
+          "scienceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_030_098_D_074_4005_DHDH_A_20260913T001223_20260913T001259_P05023_N_F_J_001/NISAR_L2_PR_GCOV_030_098_D_074_4005_DHDH_A_20260913T001223_20260913T001259_P05023_N_F_J_001.h5",
+          "bands": {
+            "HH": {
+              "path": "/drought/north-florida/G4311534924-ASF-HH.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_030_098_D_074_4005_DHDH_A_20260913T001223_20260913T001259_P05023_N_F_J_001/NISAR_L2_PR_GCOV_030_098_D_074_4005_DHDH_A_20260913T001223_20260913T001259_P05023_N_F_J_001_NATIVE_A_HHHH.png",
+              "sourceSha256": "5b3b94bea93fed25d43e0412a0f5f0495ff67d8f762f015fe8047514f24fd47b",
+              "width": 1120,
+              "height": 1099
+            },
+            "HV": {
+              "path": "/drought/north-florida/G4311534924-ASF-HV.webp",
+              "sourceUrl": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_030_098_D_074_4005_DHDH_A_20260913T001223_20260913T001259_P05023_N_F_J_001/NISAR_L2_PR_GCOV_030_098_D_074_4005_DHDH_A_20260913T001223_20260913T001259_P05023_N_F_J_001_NATIVE_A_HVHV.png",
+              "sourceSha256": "4bc6e1efce8000acd0b9f0f99f2af9cda0e1173bde402ab2ffa7d2a1eb9fab3a",
+              "width": 1120,
+              "height": 1099
+            }
+          }
+        }
+      ],
+      "geometry": {
+        "track": 98,
+        "frame": 74,
+        "direction": "Descending",
+        "release": "P05023"
+      }
+    },
+    {
+      "id": "precipitation-anomaly",
+      "units": "mm",
+      "measurement": "Monthly precipitation minus the same calendar month's 1991–2020 mean",
+      "resolution": "NOAA Florida North climate division (0802) area mean",
+      "dates": [
+        "2026-06-01",
+        "2026-09-30"
+      ],
+      "source": "NOAA NCEI nClimDiv / Climate at a Glance",
+      "sourceUrl": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/0802/pcp/1/0/1991-2026.json?base_prd=true&begbaseyear=1991&endbaseyear=2020",
+      "sourceSha256": "34c36238f6a4a67bb1777aea8067d4c007350391a2290075cd809d89654f72a5",
+      "rawPath": "/drought/noaa-0802-precipitation.json",
+      "baseline": "1991–2020 (30 observations per calendar month)",
+      "status": "observed",
+      "series": [
+        {
+          "month": "2026-06",
+          "precipitationMm": 121.666,
+          "normalMm": 183.083,
+          "anomalyMm": -61.417
+        },
+        {
+          "month": "2026-07",
+          "precipitationMm": 127.762,
+          "normalMm": 176.183,
+          "anomalyMm": -48.421
+        },
+        {
+          "month": "2026-08",
+          "precipitationMm": 217.678,
+          "normalMm": 188.222,
+          "anomalyMm": 29.456
+        },
+        {
+          "month": "2026-09",
+          "precipitationMm": 111.506,
+          "normalMm": 149.335,
+          "anomalyMm": -37.829
+        }
+      ]
+    }
+  ],
+  "independentRecord": {
+    "label": "NWS Jacksonville drought statement · September 17, 2026",
+    "url": "https://www.weather.gov/media/jax/DGT/DGT_JAX_09172026.pdf",
+    "scope": "The report describes improving drought and lingering effects in the Lower Santa Fe River basin four days after the second NISAR pass."
+  }
+}
