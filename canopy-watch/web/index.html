@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101510">
+  <title>Canopy Watch · Forest change</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/compare.css">
+  <script type="module" src="/compare.js"></script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/"><span class="brand-icon" aria-hidden="true">◉</span> Canopy<span>Watch</span></a>
+  <a class="method-link" href="#method">Data &amp; method</a>
+</header>
+<main>
+  <section class="intro">
+    <div>
+      <h1>Forest change</h1>
+      <p>Compare the same footprint across dates, then check the radar evidence.</p>
+    </div>
+    <nav class="event-list" aria-label="Forest change events">
+      <a href="/?event=rondonia" data-event="rondonia"><strong>Rondônia, Brazil</strong><span>Mapped tree-cover loss · Sentinel</span></a>
+      <a href="/?event=louisiana" data-event="louisiana"><strong>Louisiana, USA</strong><span>Radar candidates · NISAR</span></a>
+    </nav>
+  </section>
+  <section id="start" class="stage start" aria-live="polite">
+    <h2 id="case-status-heading">Loading the comparison…</h2>
+    <p id="file-status"></p>
+  </section>
+  <div class="workspace" id="comparison" hidden>
+    <section class="stage" aria-label="Comparison viewer">
+      <header class="stage-head">
+        <div><h2 id="case-title"></h2><p class="stage-meta" id="pair"></p></div>
+        <div class="segmented" aria-label="View">
+          <button type="button" data-mode="optical">Optical + change</button>
+          <button type="button" data-mode="radar">Radar + change</button>
+          <button type="button" data-mode="terrain" id="terrain-button">3D terrain</button>
+        </div>
+      </header>
+      <div class="plate" id="plate">
+        <figure class="map-panel">
+          <figcaption><strong>Before</strong><span id="before-date"></span></figcaption>
+          <canvas id="before-map" role="img"></canvas>
+        </figure>
+        <figure class="map-panel">
+          <figcaption><strong>After</strong><span id="after-date"></span></figcaption>
+          <canvas id="after-map" role="img"></canvas>
+        </figure>
+        <figure class="map-panel delta-panel">
+          <figcaption><strong>Radar difference</strong><span id="difference-date"></span></figcaption>
+          <canvas id="change-map" role="img"></canvas>
+        </figure>
+      </div>
+      <div class="viewport" id="terrain-viewport" hidden>
+        <canvas id="overlay" role="img" aria-label="Radar data draped on elevation"></canvas>
+      </div>
+      <div class="map-controls">
+        <div class="view-options" id="view-options">
+          <div class="segmented" aria-label="Map extent">
+            <button type="button" data-focus="patch">Selected footprint</button>
+            <button type="button" data-focus="scene">Study area</button>
+          </div>
+          <label><input type="checkbox" id="show-boundary" checked> Footprint</label>
+          <label id="reference-option" hidden><input type="checkbox" id="show-reference"> Mapped tree-cover loss</label>
+          <span class="map-scale" id="map-scale"></span>
+        </div>
+        <div class="terrain-controls" id="terrain-controls" hidden>
+          <label>Rotation <input type="range" id="rotation" min="-180" max="180" value="-28"></label>
+          <label>Vertical exaggeration <input type="range" id="exaggeration" min="1" max="30" value="8"></label>
+          <label>Drape <select id="drape"><option value="change">Change</option><option value="before">Before</option><option value="after">After</option></select></label>
+        </div>
+        <div class="map-key">
+          <div class="scale-legend"><span id="scale-min"></span><span class="ramp delta" id="ramp"></span><span id="scale-max"></span></div>
+          <span id="backscatter-scale"></span><span id="key-caption"></span>
+        </div>
+      </div>
+      <section class="data-panel interpretation" aria-labelledby="interpreter-title">
+        <div class="interpret-head">
+          <div><h2 id="interpreter-title">AI patch interpretation</h2><p id="selected-evidence"></p></div>
+          <button type="button" class="primary" id="interpret-button" disabled>Interpret patch</button>
+        </div>
+        <p id="interpret-status" role="status"></p>
+        <div id="interpret-result" hidden></div>
+      </section>
+    </section>
+    <aside class="evidence" aria-label="Comparison measurements">
+      <div class="evidence-head"><h2>Footprint evidence</h2><p id="evidence-status"></p></div>
+      <div class="data-panel screening">
+        <label id="patch-label" for="patch-select" hidden>Review footprint
+          <select id="patch-select"></select>
+        </label>
+        <dl id="patch-metrics" class="metrics"></dl>
+        <p id="patch-detail"></p>
+        <div id="screening-controls">
+          <div class="screen-controls">
+            <label>Minimum HV drop <select id="drop-db"></select></label>
+            <label>Minimum patch area <select id="minimum-ha"></select></label>
+          </div>
+          <p id="screen-summary" class="screen-summary" role="status"></p>
+        </div>
+      </div>
+      <div class="data-panel">
+        <h2>Scene measurements</h2>
+        <div class="segmented polarization" id="polarization" aria-label="Polarization">
+          <button type="button" data-band="HH">HH</button>
+          <button type="button" data-band="HV">HV</button>
+        </div>
+        <dl class="metrics" id="metrics"></dl>
+        <p id="grid"></p>
+        <p id="terrain-source"></p>
+      </div>
+      <details id="method" class="data-panel"><summary>Scene IDs and method</summary><p id="method-text"></p><div id="provenance"></div></details>
+    </aside>
+  </div>
+  <footer class="foot"><span>Canopy Watch / NASA Space Apps</span><span id="credits"></span></footer>
+</main>
+</body>
+</html>
