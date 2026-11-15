@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f6f0">
-  <title>Canopy Watch · Forest change atlas</title>
+  <title>Canopy Watch · Environmental change atlas</title>
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/globe/atlas.css">
   <link rel="stylesheet" href="/compare.css">
+  <link rel="stylesheet" href="/drought/viewer.css">
   <script type="module" src="/atlas.js"></script>
 </head>
 <body>
@@ -18,7 +19,7 @@
   <main>
     <section id="atlas" aria-labelledby="atlas-title">
       <header class="atlas-intro">
-        <h1 id="atlas-title">Forest Change Atlas</h1>
+        <h1 id="atlas-title">Environmental Change Atlas</h1>
         <p>Pick a site to explore before and after satellite imagery and the radar evidence of change.</p>
       </header>
       <div class="atlas-layout" id="atlas-layout">
@@ -43,6 +44,8 @@
         <aside class="event-browser" aria-labelledby="event-title">
           <div class="event-browser-head">
             <h2 id="event-title">Study sites</h2>
+            <label for="event-type">Event type</label>
+            <select id="event-type"><option value="all">All events</option><option value="forest-disturbance">Forest disturbance</option><option value="drought">Drought</option></select>
             <label class="site-search" for="site-search">Search by name or location</label>
             <input id="site-search" type="search" placeholder="Search sites" autocomplete="off">
           </div>
