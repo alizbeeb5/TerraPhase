@@ -22,16 +22,32 @@ and the stable footprint as local context. Handle small changes in a stable foot
 Report remaining uncertainty and specific verification steps. Avoid claims about exact clearing dates,
 causes, diagnoses of legality, landowners, or confidence scores. Use short, plain-language sentences.`;
 
+const REPORT_SCHEMA = { ...SCHEMA,
+  properties: { ...SCHEMA.properties, actions: { type: 'array', items: { type: 'string' } } },
+  required: [...SCHEMA.required, 'actions'],
+};
+const REPORT_INSTRUCTIONS = `
+Create an evidence report for the requested scope. Tie key claims to the supplied scene dates,
+measurements or named source; stop at what the evidence supports. Keep observed loss and a
+modeled outlook separate. A ranked zone can prioritize monitoring and has no calibrated probability.
+Return a concrete, ordered verification checklist and a distinct list of conditional response actions.
+For a radar-only candidate prioritize cross-checks, including moisture or inundation. For an independently
+corroborated loss footprint, propose documenting the location and asking the relevant land manager
+to review the boundary and determine the cause. For the stable control prioritize monitoring.
+Describe prevention measures as options conditional on a verified driver. Do not invent local
+authority names, promise that an action will stop loss, or advise direct confrontation.`;
+
 async function interpretPatch(key, evidence) {
+  const report = Boolean(evidence.reportScope);
   const response = await fetch('https://api.openai.com/v1/responses', {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
     signal: AbortSignal.timeout(30_000),
     body: JSON.stringify({
-      model: MODEL, store: false, max_output_tokens: 700,
-      instructions: INSTRUCTIONS,
+      model: MODEL, store: false, max_output_tokens: report ? 1300 : 700,
+      instructions: INSTRUCTIONS + (report ? REPORT_INSTRUCTIONS : ''),
       input: JSON.stringify(evidence),
-      text: { format: { type: 'json_schema', name: 'patch_interpretation', strict: true, schema: SCHEMA } },
+      text: { format: { type: 'json_schema', name: 'patch_interpretation', strict: true, schema: report ? REPORT_SCHEMA : SCHEMA } },
     }),
   });
   if (!response.ok) {
@@ -47,7 +63,7 @@ async function interpretPatch(key, evidence) {
   }
   const answer = JSON.parse(content.find(item => item.type === 'output_text')?.text ?? '{}');
   if (![answer.observation, answer.explanation].every(value => typeof value === 'string' && value.trim())
-    || ![answer.alternatives, answer.verification].every(values =>
+    || ![answer.alternatives, answer.verification, ...(report ? [answer.actions] : [])].every(values =>
       Array.isArray(values) && values.length && values.every(value => typeof value === 'string' && value.trim()))) {
     throw Error('The model returned incomplete interpretation fields. Try again.');
   }

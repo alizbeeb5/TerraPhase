@@ -61,3 +61,21 @@ test('provider outage and incomplete answer return recoverable errors', async ()
   const incomplete = createWorker(async () => Response.json({ status: 'incomplete', output: [] }));
   assert.equal((await incomplete.fetch(request(body), env)).status, 502);
 });
+
+test('event reports accept no patch, use trusted scene evidence and require response actions', async () => {
+  let evidence;
+  const api = createWorker(async (_url, options) => {
+    const body = JSON.parse(options.body);
+    evidence = JSON.parse(body.input);
+    assert.ok(body.text.format.schema.required.includes('actions'));
+    return Response.json({ status: 'completed', output: [{ content: [{ type: 'output_text',
+      text: JSON.stringify({ ...answer, actions: ['Share the verified footprint with the land manager.'] }) }] }] });
+  });
+  const response = await api.fetch(request({ eventId: 'rondonia', scope: 'event', patchId: null, summary: 'injected' }), env);
+  assert.equal(response.status, 200);
+  assert.equal(evidence.reportScope, 'event');
+  assert.equal(evidence.comparedFootprints.length, 2);
+  assert.ok(evidence.sceneIds[0].startsWith('S1'));
+  assert.equal(evidence.summary, undefined);
+  assert.equal((await api.fetch(request({ eventId: 'rondonia', scope: 'event', patchId: 2 }), env)).status, 400);
+});
