@@ -83,3 +83,18 @@ select{font:inherit;background:var(--surface);color:var(--ink);border:1px solid 
 #comparison .plate[data-layout=swipe] .map-panel:first-child figcaption::after{content:'Before on left · After on right'}
 @media(max-width:530px){#comparison .plate{grid-template-columns:1fr}#comparison .delta-panel{grid-column:auto}#comparison .delta-panel canvas{width:100%;margin:0}#comparison .comparison-toolbar .segmented{max-width:100%;flex-wrap:wrap}}
 #comparison .comparison-back{border:1px solid var(--stroke);border-radius:6px;background:#fff;color:var(--ink);padding:6px 10px;font-size:.76rem}
+
+.report-controls,.outlook-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.report-controls{margin-top:12px}
+#comparison #report-download{padding:6px 9px;border:1px solid var(--stroke);border-radius:6px;background:var(--surface);color:var(--ink)}
+#interpret-result ol{margin:5px 0 0;padding-left:20px}
+#interpret-result li+li{margin-top:4px}
+#report-sources,.outlook-panel details{margin-top:12px}
+#report-sources a{display:inline-block;margin:4px 12px 0 0}
+.report-acquisition{overflow-wrap:anywhere;font-family:ui-monospace,monospace;font-size:.73rem}
+.outlook-head{justify-content:space-between}
+.outlook-head label{display:flex;gap:5px;align-items:center;color:#7c246a;font-weight:650}
+.outlook-panel table{margin-top:8px;border-collapse:collapse;text-align:left;font-variant-numeric:tabular-nums}
+.outlook-panel th,.outlook-panel td{padding:4px 8px;border-bottom:1px solid var(--stroke)}
+#outlook-zones{margin-top:8px}
+#outlook-zones select{margin-left:6px}

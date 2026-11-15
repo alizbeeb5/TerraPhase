@@ -4,10 +4,14 @@ import { events } from './comparison/events.js';
 import { validateComparison, commonMask, areaSummary, clampExtent, zoomExtent } from './comparison/core.js';
 import { mountControls } from './comparison/controls.js';
 import { mountComparisonShell } from './comparison/workspace.js';
+import { mountReport, evidenceReport, applyAI, showReport, downloadReport } from './comparison/report.js';
+import { mountOutlook, loadOutlook, showOutlook, describeZone } from './comparison/outlook.js';
 
 const $ = id => document.getElementById(id);
 mountComparisonShell();
 mountControls();
+mountReport();
+mountOutlook(toggleOutlook, selectRiskZone);
 const maps = ['before-map', 'after-map', 'change-map'].map($);
 const canvas = $('overlay');
 const context = canvas.getContext('2d');
@@ -193,18 +197,20 @@ function draw() {
   $('terrain-controls').hidden = !terrain;
   $('view-options').hidden = terrain;
   $('reference-option').hidden = !state.referenceLayer;
+  const showRisk = Boolean(state.outlook && $('show-outlook').checked);
   const isDelta = !terrain || drape === 'change';
   const range = isDelta ? (data.layers[band].changeRange ?? [-8, 8]) : data.layers[band].range;
   $('scale-min').textContent = range[0] + ' dB';
   $('scale-max').textContent = (range[1] > 0 ? '+' : '') + range[1] + ' dB';
   $('ramp').classList.toggle('delta', isDelta);
-  document.querySelector('.map-key').hidden = !terrain && state.layout === 'swipe' && !$('show-change').checked;
+  document.querySelector('.map-key').hidden = !terrain && state.layout === 'swipe' && !$('show-change').checked && !showRisk;
   $('backscatter-scale').textContent = mode === 'radar'
     ? 'Before and after share the ' + data.layers[band].range.join(' to ') + ' dB scale.' : '';
   $('key-caption').textContent = isDelta ? 'Cyan decrease · Orange increase'
     + (!terrain && $('show-boundary').checked && activePatch() ? ' · Gold footprint' : '')
     + (!terrain && state.id === 'rondonia' && state.focus === 'scene' ? ' · Checkerboard = no shared radar data' : '')
-    + (!terrain && state.referenceLayer && $('show-reference').checked ? ' · Purple mapped loss' : '') : 'Backscatter';
+    + (!terrain && state.referenceLayer && $('show-reference').checked ? ' · Purple mapped loss' : '')
+    + (!terrain && showRisk ? ' · Dashed magenta: ' + state.outlook.targetYear + ' monitoring priority' : '') : 'Backscatter';
   if (terrain) {
     drawTerrain(images[band][drape], data.terrain, data.grid);
     return;
@@ -241,6 +247,15 @@ function draw() {
       ctx.globalAlpha = .55;
       ctx.drawImage(state.referenceLayer, ...extent, 0, 0, width, height);
       ctx.globalAlpha = 1;
+    }
+    if (showRisk && (index > 0 || state.layout === 'swipe')) {
+      ctx.save();
+      if (index === 0) {
+        const cut = width * Number($('swipe-position').value) / 100;
+        ctx.beginPath(); ctx.rect(cut, 0, width - cut, height); ctx.clip();
+      }
+      ctx.drawImage(state.outlook.layer, ...extent, 0, 0, width, height);
+      ctx.restore();
     }
     drawBoundaries(ctx, extent, index === 2);
     if (state.cursor) {
@@ -302,34 +317,68 @@ function drawTerrain(image, terrain, grid) {
   }
 }
 
-function drawInterpretation(answer) {
-  const sections = [
-    ['What changed', answer.observation],
-    ['Canopy disturbance explanation', answer.explanation],
-    ['Other possible causes', answer.alternatives],
-    ['How to verify', answer.verification],
-  ];
-  const output = $('interpret-result');
-  output.replaceChildren(...sections.map(([title, values]) => {
-    const section = document.createElement('section');
-    const heading = document.createElement('h3');
-    heading.textContent = title;
-    section.append(heading);
-    const items = Array.isArray(values);
-    const body = document.createElement(items ? 'ul' : 'p');
-    if (items) {
-      for (const value of values) {
-        const item = document.createElement('li');
-        item.textContent = value;
-        body.append(item);
-      }
-    } else {
-      body.textContent = values;
-    }
-    section.append(body);
-    return section;
-  }));
-  output.hidden = false;
+function reportPatch() {
+  return $('report-scope').value === 'patch' ? activePatch() : null;
+}
+
+function resetReport() {
+  state.selection++;
+  activeInterpretation?.abort();
+  $('interpret-status').textContent = '';
+  const patch = activePatch();
+  $('report-scope').options[1].disabled = !patch;
+  if (!patch) $('report-scope').value = 'event';
+  const selected = reportPatch();
+  $('selected-evidence').textContent = selected
+    ? (selected.name ?? 'Candidate footprint') + ' · ' + formatArea(selected.areaHa)
+    : 'Whole event · ' + state.data.label;
+  $('interpret-button').disabled = false;
+  state.report = buildReport(selected);
+  showReport(state.report);
+}
+
+function buildReport(patch = reportPatch()) {
+  return evidenceReport({
+    ...state, patch, numeric: Boolean(state.screen?.numeric), sources: details[state.id].sources,
+  });
+}
+
+function toggleOutlook(show) {
+  $('outlook-zones').hidden = !show;
+  if (show) {
+    if (state.mode === 'terrain') state.mode = events[state.id].defaultView;
+    state.focus = 'scene';
+    state.viewport = null;
+    state.cursor = null;
+  }
+  updateControls();
+}
+
+function selectRiskZone(id, focus = true) {
+  if (!state.outlook) return;
+  const zone = describeZone(state.outlook, id);
+  if (!zone || !focus) return;
+  const [x, y] = zone.center;
+  state.viewport = clampExtent([x - 45, y - 45, 90, 90], state.data.grid);
+  state.cursor = null;
+  draw();
+}
+
+async function prepareOutlook(id, grid, turn) {
+  if (id !== 'rondonia') {
+    showOutlook(null, 'A projection needs compatible repeat observations across multiple years and independently confirmed disturbance history.');
+    return;
+  }
+  showOutlook(null, 'Loading the Rondônia tree-cover-loss outlook…');
+  try {
+    const outlook = await loadOutlook(grid);
+    if (turn !== state.load) return;
+    state.outlook = outlook;
+    showOutlook(outlook, outlook.targetYear + ' tree-cover-loss outlook · source history through ' + outlook.cutoff);
+    if (!state.report?.model && !activeInterpretation) resetReport();
+  } catch {
+    if (turn === state.load) showOutlook(null, 'The outlook is unavailable. Observed change and the evidence report are still available.');
+  }
 }
 
 async function requestInterpretation() {
@@ -337,21 +386,22 @@ async function requestInterpretation() {
   const controller = new AbortController();
   activeInterpretation = controller;
   $('interpret-button').disabled = true;
-  $('interpret-status').textContent = 'Interpreting the selected patch…';
-  $('interpret-result').hidden = true;
+  $('interpret-status').textContent = 'Generating an evidence report…';
   try {
     const response = await fetch('/api/interpret', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId: state.id, patchId: state.patchId, dropDb: state.dropDb, minimumHa: state.minimumHa }),
+      body: JSON.stringify({ eventId: state.id, scope: $('report-scope').value, patchId: reportPatch()?.id ?? null,
+        dropDb: state.dropDb, minimumHa: state.minimumHa }),
       signal: controller.signal,
     });
     const answer = await response.json();
     if (selection !== state.selection) return;
     if (!response.ok) throw new Error(answer.error || 'The interpretation could not be loaded.');
-    drawInterpretation(answer);
-    $('interpret-status').textContent = 'AI interpretation';
+    state.report = applyAI(buildReport(), answer);
+    showReport(state.report);
+    $('interpret-status').textContent = 'AI-assisted report. Review the source measurements before acting.';
   } catch (error) {
-    if (selection === state.selection) $('interpret-status').textContent = error.message;
+    if (selection === state.selection) $('interpret-status').textContent = error.message + ' You can still download the evidence checklist.';
   } finally {
     if (selection === state.selection) $('interpret-button').disabled = false;
     if (activeInterpretation === controller) activeInterpretation = null;
@@ -368,14 +418,6 @@ function selectPatch(id) {
   $('patch-select').value = id == null ? '' : String(id);
   const patch = activePatch();
   const isBrazil = state.id === 'rondonia';
-  $('selected-evidence').textContent = patch
-    ? (patch.name ?? 'Candidate footprint') + ' · ' + formatArea(patch.areaHa)
-    : 'No candidate footprint at these settings.';
-  $('interpret-button').disabled = !patch;
-  state.selection++;
-  activeInterpretation?.abort();
-  $('interpret-status').textContent = '';
-  $('interpret-result').hidden = true;
   rows('patch-metrics', !patch ? [] : isBrazil ? [
     ['Footprint area', formatArea(patch.areaHa)],
     ['Mean VH change', formatDb(patch.meanDb)],
@@ -391,6 +433,7 @@ function selectPatch(id) {
     ? (patch.id === 1 ? 'The same footprint is outlined in all three panels. Radar and optical acquisition dates differ.' : 'Nearby forest observed on the same dates provides a local comparison.')
     : 'Radar decrease in historical tree cover. The cause remains unverified.';
   updateControls();
+  resetReport();
 }
 
 function populatePatches() {
@@ -447,7 +490,12 @@ function pickPatch(event) {
   const x = Math.floor((event.clientX - rectangle.left) * width / rectangle.width);
   const y = Math.floor((event.clientY - rectangle.top) * height / rectangle.height);
   if (x < 0 || y < 0 || x >= width || y >= height) return;
-  const id = state.result.labels[(top + y) * state.data.grid.width + left + x];
+  const index = (top + y) * state.data.grid.width + left + x;
+  if ($('show-outlook').checked && event.currentTarget !== maps[0] && state.outlook?.labels[index]) {
+    selectRiskZone(state.outlook.labels[index], false);
+    return;
+  }
+  const id = state.result.labels[index];
   if (id) {
     state.focus = 'patch';
     selectPatch(id);
@@ -473,7 +521,7 @@ async function openEvent(id) {
     const option = events[id];
     Object.assign(state, {
       ...entry, id, band: option.band, mode: option.defaultView, focus: 'scene', patchId: null,
-      viewport: null, cursor: null, layout: 'split', dropDb: null, minimumHa: null,
+      viewport: null, cursor: null, layout: 'split', dropDb: null, minimumHa: null, outlook: null, report: null,
       optical: entry.optical ?? null, referenceLayer: entry.referenceLayer ?? null, screen: entry.screen ?? null,
     });
     const { data } = entry;
@@ -509,6 +557,8 @@ async function openEvent(id) {
         return a;
       }),
     );
+    $('report-scope').value = 'event';
+    prepareOutlook(id, data.grid, turn);
     if (isBrazil) populatePatches();
     else rebuildScreen();
     $('comparison').hidden = false;
@@ -553,6 +603,8 @@ $('drop-db').addEventListener('change', rebuildScreen);
 $('minimum-ha').addEventListener('change', rebuildScreen);
 $('patch-select').addEventListener('change', event => { state.focus = 'patch'; selectPatch(Number(event.target.value)); });
 $('interpret-button').addEventListener('click', requestInterpretation);
+$('report-scope').addEventListener('change', resetReport);
+$('report-download').addEventListener('click', () => downloadReport(state.report, state.id));
 maps.forEach(map => map.addEventListener('click', pickPatch));
 document.querySelector('.method-link')?.addEventListener('click', () => { $('method').open = true; });
 function updateSummary() {
@@ -578,13 +630,14 @@ function inspectCell(point) {
   const [x, y] = point;
   const i = y * state.data.grid.width + x;
   const valid = state.coverage[state.band].mask[i];
+  const zone = $('show-outlook').checked ? state.outlook?.labels[i] : null;
   let text = `Cell ${x + 1}, ${y + 1} · ${state.band} · `;
   if (!valid) text += 'No shared radar data; excluded from analysis.';
   else if (state.screen) {
     const delta = state.screen.numeric?.[state.band]?.[i] ?? (state.screen[state.band][i] - 127) * 8 / 127;
     text += 'after − before: ' + formatDb(delta, !state.screen.numeric);
   } else text += 'Valid radar cell. Per-cell numerical change is not available in this archive.';
-  $('pixel-inspection').textContent = text;
+  $('pixel-inspection').textContent = text + (zone ? ' · Monitoring priority zone ' + zone : '');
 }
 
 function mapPoint(event, extent = state.extent) {

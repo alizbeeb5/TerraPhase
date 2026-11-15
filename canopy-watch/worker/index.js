@@ -37,15 +37,29 @@ async function interpret(request, env, url) {
   let selection;
   try { selection = JSON.parse(raw); } catch { return json({ error: 'Invalid patch request.' }, 400); }
   if (pending.has(user)) return json({ error: 'An interpretation is already running.' }, 429);
-  const { eventId = 'louisiana', patchId, dropDb, minimumHa } = selection ?? {};
-  if (!Number.isInteger(patchId) || !['louisiana', 'rondonia'].includes(eventId)) {
+  const { eventId = 'louisiana', patchId, dropDb, minimumHa, scope } = selection ?? {};
+  const wholeEvent = scope === 'event';
+  const isReport = wholeEvent || scope === 'patch';
+  if ((scope !== undefined && !isReport) || (wholeEvent ? patchId != null : !Number.isInteger(patchId))
+      || !['louisiana', 'rondonia'].includes(eventId)) {
     return json({ error: 'Invalid event or footprint.' }, 400);
   }
   if (eventId === 'louisiana' && !validSettings(dropDb, minimumHa)) {
     return json({ error: 'Invalid screening settings.' }, 400);
   }
-  const evidence = eventId === 'rondonia' ? rondoniaEvidence(patchId) : louisianaEvidence(patchId, dropDb, minimumHa);
+  const selectedPatch = wholeEvent ? null : patchId;
+  const evidence = eventId === 'rondonia' ? rondoniaEvidence(selectedPatch) : louisianaEvidence(selectedPatch, dropDb, minimumHa);
   if (!evidence) return json({ error: 'This footprint is outside the selected event.' }, 404);
+  if (isReport) {
+    evidence.reportScope = scope;
+    const path = '/rondonia/outlook.json';
+    const outlook = eventId === 'rondonia' && Object.hasOwn(ASSETS, path) ? JSON.parse(assetText(path)) : null;
+    evidence.outlook = outlook
+      ? { cutoff: outlook.cutoff, targetYear: outlook.targetYear, model: outlook.model,
+          drivers: outlook.drivers, heldOutCapture: outlook.evaluation.selectedCapture, source: outlook.source.name,
+          definition: 'Relative priority among surviving baseline forest cells. The mapped zones and historical capture are not parcel probabilities.' }
+      : { available: false, missing: 'A compatible, independently corroborated multi-year history of mapped disturbance is needed.' };
+  }
   pending.add(user);
   try {
     return json(await interpretPatch(env.OPENAI_API_KEY, evidence));
@@ -62,11 +76,11 @@ function louisianaEvidence(patchId, dropDb, minimumHa) {
   screening ??= decodeScreening(JSON.parse(assetText('/louisiana-screening.json')));
   const result = screenForest(screening, dropDb, minimumHa);
   const patch = result.patches.find(entry => entry.id === patchId);
-  if (!patch) return null;
+  if (patchId !== null && !patch) return null;
   comparison ??= JSON.parse(assetText('/canopy-watch-louisiana.json'));
   const [before, after] = comparison.scenes;
   return {
-    area: comparison.label, dates: [before.date, after.date],
+    area: comparison.label, dates: [before.date, after.date], sceneIds: [before.id, after.id],
     track: before.track, orbit: before.pass === 'A' ? 'ascending' : 'descending',
     frame: before.frame, sensor: 'NISAR L-band', polarization: 'HV with HH context',
     gridSpacingM: screening.grid.spacingM, epsg: screening.grid.epsg,
@@ -75,11 +89,11 @@ function louisianaEvidence(patchId, dropDb, minimumHa) {
     summary: { screenedForestHa: result.forestHa, candidateDisturbanceHa: result.flaggedHa,
       candidateShareOfScreenedForestPct: result.flaggedForestPct, candidateCount: result.patches.length },
     scope: 'Candidates within historical forest; not confirmed deforestation. Scene-level statistics are independent of this threshold.',
-    patch: {
+    patch: patch ? {
       areaHa: patch.areaHa, cells: patch.cells, medianHvDb: patch.hvDb, medianHhDb: patch.hhDb,
       centerM: patch.centerM, waterOrWetlandEdgePct: patch.waterOrWetlandEdgePct,
       edgeDefinition: 'Water or herbaceous wetlands among neighboring cells with mapped nonforest classes.',
-    },
+    } : null,
     changeConvention: 'after minus before (dB)',
     measurements: screening.numeric ? 'Unclipped float32 radar change calculated from aligned linear-power inputs.'
       : 'Approximate radar change recovered from lossless display; clipped at ±8 dB. Threshold includes a 0.06 dB quantization margin.',
@@ -90,13 +104,15 @@ function louisianaEvidence(patchId, dropDb, minimumHa) {
 function rondoniaEvidence(patchId) {
   rondonia ??= JSON.parse(assetText('/rondonia/comparison.json'));
   const patch = rondonia.patches.find(entry => entry.id === patchId);
-  if (!patch) return null;
+  if (patchId !== null && !patch) return null;
   return {
     area: rondonia.label, dates: rondonia.scenes.map(scene => scene.date),
+    sceneIds: rondonia.scenes.map(scene => scene.id),
     orbit: rondonia.scenes[0].orbit, sensor: 'Sentinel-1 C-band', polarization: 'VH',
-    gridSpacingM: rondonia.grid.spacingM, patch,
-    scope: patch.id === 2 ? 'Selected stable control: do not count its area as forest loss.'
-      : 'Selected evidence footprint only, not an exhaustive estimate of scene-wide loss.',
+    gridSpacingM: rondonia.grid.spacingM, patch: patch ?? null,
+    scope: patch?.id === 2 ? 'Selected stable control: do not count its area as forest loss.'
+      : 'Curated evidence footprint only, not an exhaustive estimate of scene-wide loss.',
+    ...(patch === undefined ? { comparedFootprints: rondonia.patches } : {}),
     repeatDate: rondonia.repeat.date, stableForestMeanChangeDb: rondonia.patches[1].meanDb,
     changeConvention: 'after minus before (dB)',
     measurements: 'Footprint mean calculated from the archived radar data before display clipping.',
