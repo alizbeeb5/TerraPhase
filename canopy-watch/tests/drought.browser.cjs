@@ -26,7 +26,7 @@ try{
  await page.getByText('No sites match your search.').waitFor();
  assert.equal(await page.locator('#site-list li:not([hidden])').count(),0);
  await page.reload();await page.getByText('No sites match your search.').waitFor();
- await page.locator('#event-type').selectOption('forest-disturbance');
+ await page.getByText('Forest disturbance',{exact:true}).click();
  assert.equal(await page.locator('#site-list li:not([hidden])').count(),1);
  for(const id of ['rondonia','louisiana']){
   await page.goto(base+'/?event='+id+'&type=forest-disturbance');
