@@ -15,6 +15,23 @@ export function mountReport({ allowPatch = true } = {}) {
   document.getElementById('interpret-result').after(source);
 }
 
+export async function fetchAIReport(selection, signal) {
+  const response = await fetch('/api/interpret', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
+    body: JSON.stringify(selection),
+  });
+  if (!response.headers.get('Content-Type')?.includes('application/json')) {
+    throw new Error('AI reports are unavailable on this deployment.');
+  }
+  const answer = await response.json();
+  if (response.ok) return answer;
+  throw new Error(answer.error || 'The AI report could not be generated.');
+}
+
+export function showAIReportError(status, error) {
+  status.textContent = error.message + ' The evidence report is still available to download.';
+}
+
 export function mountEventReport(eventId) {
   mountReport({ allowPatch: false });
   const button = document.getElementById('interpret-button');
@@ -26,18 +43,13 @@ export function mountEventReport(eventId) {
     button.disabled = true;
     status.textContent = 'Generating an evidence report…';
     try {
-      const response = await fetch('/api/interpret', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: current.signal,
-        body: JSON.stringify({ eventId, scope: 'event', comparisonDate }),
-      });
-      const answer = await response.json();
+      const answer = await fetchAIReport({ eventId, scope: 'event', comparisonDate }, current.signal);
       if (current.signal.aborted) return;
-      if (!response.ok) throw Error(answer.error || 'The AI report could not be generated.');
       report = applyAI(baseline, answer);
       showReport(report);
       status.textContent = 'AI report generated from event evidence.';
     } catch (error) {
-      if (!current.signal.aborted) status.textContent = error.message + ' The evidence report is still available to download.';
+      if (!current.signal.aborted) showAIReportError(status, error);
     } finally {
       if (!current.signal.aborted) button.disabled = false;
     }

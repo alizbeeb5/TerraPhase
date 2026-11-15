@@ -5,6 +5,11 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "node scripts/dev.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "build:amplify": "node scripts/build-amplify.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.1169.0",
+    "@aws-sdk/client-secrets-manager": "3.1169.0"
   }
 }

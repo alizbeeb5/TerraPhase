@@ -77,6 +77,14 @@ async function interpret(request, env, url) {
   }
   pending.add(user);
   try {
+    if (env.reserveInterpretation) {
+      let reserved;
+      try { reserved = await env.reserveInterpretation(); } catch {
+        console.error('TerraPhase could not reserve space in the AI report quota.');
+        return json({ error: 'AI reports are temporarily unavailable. Try again shortly.' }, 503);
+      }
+      if (!reserved) return json({ error: 'Today’s AI report limit has been reached. Try again after midnight UTC.' }, 429);
+    }
     return json(await interpretPatch(env.OPENAI_API_KEY, evidence));
   } catch (error) {
     return json({ error: error.status === 429

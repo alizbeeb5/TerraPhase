@@ -222,6 +222,8 @@ __marimo__/
 # Canopy Watch data rebuild intermediates
 cache/
 *.partial.tif
+/.amplify-hosting/
+/.amplify-hosting-staging/
 
 # Shared frontend source from main is authored under dist/.
 !dist/

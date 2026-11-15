@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: TerraPhase public AI report quota and runtime access to an existing OpenAI secret.
+Parameters:
+  AmplifyAppId:
+    Type: String
+    AllowedPattern: 'd[a-z0-9]{1,19}'
+  PublicOrigin:
+    Type: String
+    AllowedPattern: 'https://[a-z0-9.-]+'
+    Description: HTTPS origin of the deployed Amplify branch, without a trailing slash.
+  SecretArn:
+    Type: String
+    Description: Full ARN of the existing Secrets Manager secret in the Amplify region.
+Resources:
+  ReportQuota:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: bucket
+          AttributeType: S
+      KeySchema:
+        - AttributeName: bucket
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+  AmplifyComputeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: amplify.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEqualsIfExists:
+                aws:SourceAccount: !Ref AWS::AccountId
+              ArnLikeIfExists:
+                aws:SourceArn: !Sub 'arn:${AWS::Partition}:amplify:${AWS::Region}:${AWS::AccountId}:apps/${AmplifyAppId}*'
+      Policies:
+        - PolicyName: TerraPhaseReports
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Ref SecretArn
+              - Effect: Allow
+                Action: dynamodb:UpdateItem
+                Resource: !GetAtt ReportQuota.Arn
+  AmplifyLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: amplify.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEqualsIfExists:
+                aws:SourceAccount: !Ref AWS::AccountId
+              ArnLikeIfExists:
+                aws:SourceArn: !Sub 'arn:${AWS::Partition}:amplify:${AWS::Region}:${AWS::AccountId}:apps/${AmplifyAppId}*'
+      Policies:
+        - PolicyName: WriteTerraPhaseHostingLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: logs:DescribeLogGroups
+                Resource: '*'
+              - Effect: Allow
+                Action: [logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents]
+                Resource: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/amplify/${AmplifyAppId}*'
+Outputs:
+  ComputeRoleArn:
+    Value: !GetAtt AmplifyComputeRole.Arn
+  ServiceRoleArn:
+    Value: !GetAtt AmplifyLogsRole.Arn
+  TERRAPHASE_PUBLIC_ORIGIN:
+    Value: !Ref PublicOrigin
+  TERRAPHASE_SECRET_ARN:
+    Value: !Ref SecretArn
+  TERRAPHASE_LIMIT_TABLE:
+    Value: !Ref ReportQuota

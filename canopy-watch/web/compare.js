@@ -5,7 +5,7 @@ import { validateComparison, commonMask, areaSummary, clampExtent, zoomExtent } 
 import { mountControls } from './comparison/controls.js';
 import { mountComparisonShell } from './comparison/workspace.js';
 import { drawTerrain } from './comparison/terrain.js';
-import { mountReport, evidenceReport, applyAI, showReport, downloadReport } from './comparison/report.js';
+import { mountReport, evidenceReport, applyAI, showReport, downloadReport, fetchAIReport, showAIReportError } from './comparison/report.js';
 import { mountOutlook, loadOutlook, showOutlook, describeZone } from './comparison/outlook.js';
 
 const $ = id => document.getElementById(id);
@@ -339,20 +339,14 @@ async function requestInterpretation() {
   $('interpret-button').disabled = true;
   $('interpret-status').textContent = 'Generating an evidence report…';
   try {
-    const response = await fetch('/api/interpret', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId: state.id, scope: $('report-scope').value, patchId: reportPatch()?.id ?? null,
-        dropDb: state.dropDb, minimumHa: state.minimumHa }),
-      signal: controller.signal,
-    });
-    const answer = await response.json();
+    const answer = await fetchAIReport({ eventId: state.id, scope: $('report-scope').value, patchId: reportPatch()?.id ?? null,
+      dropDb: state.dropDb, minimumHa: state.minimumHa }, controller.signal);
     if (selection !== state.selection) return;
-    if (!response.ok) throw new Error(answer.error || 'The interpretation could not be loaded.');
     state.report = applyAI(buildReport(), answer);
     showReport(state.report);
     $('interpret-status').textContent = 'AI-assisted report. Review the source measurements before acting.';
   } catch (error) {
-    if (selection === state.selection) $('interpret-status').textContent = error.message + ' You can still download the evidence checklist.';
+    if (selection === state.selection) showAIReportError($('interpret-status'), error);
   } finally {
     if (selection === state.selection) $('interpret-button').disabled = false;
     if (activeInterpretation === controller) activeInterpretation = null;

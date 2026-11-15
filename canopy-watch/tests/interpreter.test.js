@@ -139,3 +139,24 @@ test('hazard reports verify the chosen date and use packaged evidence and outloo
   assert.equal((await api.fetch(request({ eventId: 'guadalupe-river-flood', scope: 'event' }), env)).status, 200);
   assert.equal(JSON.parse(payload.input).replay.horizonMinutes, 60);
 });
+
+test('the public hosting quota is charged only for a valid report, before calling OpenAI', async () => {
+  let slots = 0;
+  let providerCalls = 0;
+  const api = createWorker(async () => {
+    providerCalls++;
+    return Response.json({ status: 'completed', output: [{ content: [{ type: 'output_text',
+      text: JSON.stringify({ ...answer, actions: ['Review the next matched pass.'] }) }] }] });
+  });
+  const options = { ...env, reserveInterpretation: async () => ++slots === 1 };
+  assert.equal((await api.fetch(request({ eventId: 'unlisted-event', scope: 'event' }), options)).status, 400);
+  assert.equal(slots, 0);
+  const selected = { eventId: 'rondonia', scope: 'event' };
+  assert.equal((await api.fetch(request(selected), options)).status, 200);
+  assert.equal((await api.fetch(request(selected), options)).status, 429);
+  assert.equal(providerCalls, 1);
+  assert.equal((await api.fetch(request(selected), { ...env, reserveInterpretation: async () => {
+    throw new Error('Quota service unavailable');
+  } })).status, 503);
+  assert.equal(providerCalls, 1);
+});
