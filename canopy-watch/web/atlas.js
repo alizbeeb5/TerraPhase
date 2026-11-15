@@ -1,10 +1,10 @@
-import { listEvents } from './comparison/events.js';
+import { listEvents, filterEvents, eventLink } from './comparison/events.js';
 
 const $ = id => document.getElementById(id);
 const params = new URL(location.href).searchParams;
 const storageKey = 'canopy-watch:atlas-view';
 const dates = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-const statusText = { ready: 'Comparison ready', processing: 'Comparison processing', unavailable: 'Imagery unavailable' };
+const statusText = { ready: 'Comparison ready', provisional: 'Provisional evidence', processing: 'Comparison processing', unavailable: 'Imagery unavailable' };
 const statusFor = event => statusText[event.status] ?? statusText.unavailable;
 const formatDate = value => value && Number.isFinite(Date.parse(value)) ? dates.format(new Date(value)) : 'Unavailable';
 const searchKey = value => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
@@ -13,10 +13,13 @@ async function renderComparison(event) {
   $('atlas').hidden = true;
   $('event-page').hidden = false;
   document.title = event.location + ' · Canopy Watch';
-  $('return-link').href = '/?selected=' + encodeURIComponent(event.id);
+  $('return-link').href = eventLink(event, params, true);
   try {
     // The comparison module reads the event ID from the URL when it mounts.
-    await import('./compare.js');
+    if (event.type === 'drought') {
+      const { mountDrought } = await import('./drought/viewer.js');
+      await mountDrought($('event-comparison-root'), event);
+    } else await import('./compare.js');
   } catch {
     $('event-comparison-root').firstElementChild.textContent = 'The comparison could not start. Reload the page to try again.';
   }
@@ -38,13 +41,13 @@ async function renderAtlas(events, initialStatus) {
     const showDetail = selected && visible.includes(selected);
     $('site-detail').hidden = !showDetail;
     if (!showDetail) return;
-    const ready = selected.status === 'ready';
+    const ready = selected.capabilities?.comparison === true;
     $('selected-location').textContent = selected.location + ' · ' + statusFor(selected);
     $('selected-title').textContent = selected.name;
     $('selected-before').textContent = formatDate(selected.beforeDate);
     $('selected-after').textContent = formatDate(selected.afterDate);
     $('explore-link').hidden = !ready;
-    if (ready) $('explore-link').href = '/?event=' + encodeURIComponent(selected.id);
+    if (ready) $('explore-link').href = eventLink(selected, params);
     $('event-unavailable').hidden = ready;
     $('event-unavailable').textContent = selected.status === 'processing'
       ? 'The comparison for this site is still processing.' : 'Comparison imagery is unavailable for this site.';
@@ -63,6 +66,7 @@ async function renderAtlas(events, initialStatus) {
     const url = new URL(location.href);
     url.searchParams.delete('event');
     url.searchParams.set('selected', event.id);
+    params.delete('event'); params.set('selected', event.id);
     history.replaceState(null, '', url);
     globe?.focus(event);
     refreshSelection();
@@ -85,8 +89,12 @@ async function renderAtlas(events, initialStatus) {
   }
 
   function filter() {
-    const query = searchKey(search.value.trim());
-    visible = events.filter(event => searchKey(event.name + ' ' + event.location).includes(query));
+    const type = $('event-type').value;
+    params.set('type', type);
+    if (search.value.trim()) params.set('q', search.value.trim()); else params.delete('q');
+    const url = new URL(location.href); url.search = params.toString();
+    history.replaceState(null, '', url);
+    visible = filterEvents(events, type, search.value);
     for (const [id, button] of buttons) {
       button.parentElement.hidden = !visible.some(event => event.id === id);
     }
@@ -95,6 +103,9 @@ async function renderAtlas(events, initialStatus) {
     refreshSelection();
   }
 
+  $('event-type').value = ['all', 'forest-disturbance', 'drought'].includes(params.get('type')) ? params.get('type') : 'all';
+  search.value = params.get('q') ?? '';
+  $('event-type').addEventListener('change', filter);
   search.disabled = events.length === 0;
   search.addEventListener('input', filter);
   $('explore-link').addEventListener('click', saveView);
@@ -139,7 +150,7 @@ try {
 }
 const requestedId = params.get('event');
 const requested = events.find(event => event.id === requestedId);
-if (requested?.status === 'ready') await renderComparison(requested);
+if (requested?.capabilities?.comparison) await renderComparison(requested);
 else {
   if (requestedId && !status) status = 'That comparison is unavailable. Choose a study site below.';
   await renderAtlas(events, status);

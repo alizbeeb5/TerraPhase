@@ -104,7 +104,7 @@ test('zoom and pan clamp to raster; anchor remains stable away from edges', () =
   assert.deepEqual(zoomExtent(extent, 100, grid), [0, 0, 1000, 600]);
 });
 test('globe contract provides stable IDs, dates, locations and isolated objects', async () => {
-  const events = await listEvents(); assert.deepEqual(events.map(e => e.id), ['rondonia', 'louisiana']);
+  const events = await listEvents(); assert.deepEqual(events.map(e => e.id), ['rondonia', 'louisiana', 'louisiana-drought']);
   events[0].center.lat = 0; assert.notEqual((await listEvents())[0].center.lat, 0);
-  assert.ok(events.every(e => e.status === 'ready' && e.beforeDate < e.afterDate));
+  assert.ok(events.every(e => ['ready', 'provisional'].includes(e.status) && e.beforeDate < e.afterDate));
 });

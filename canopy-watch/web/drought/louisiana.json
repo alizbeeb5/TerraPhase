@@ -1,0 +1,67 @@
+{
+  "schema": "terraphase-drought/v1",
+  "id": "louisiana-drought",
+  "status": "provisional",
+  "comparisonPath": "/canopy-watch-louisiana.json",
+  "limitations": [
+    "Radar assets are display-derived from provisional GCOV; raw paired HDF5 files are not bundled.",
+    "Backscatter responds to vegetation, inundation, roughness and moisture. It is not soil moisture or a drought classification.",
+    "Regional monthly rainfall is contextual evidence at a different scale; June includes days before the first radar observation.",
+    "No SME2 soil-moisture observations or evaluated forecast asset is available."
+  ],
+  "layers": [
+    {
+      "id": "gcov",
+      "measurement": "Terrain-corrected gamma0 radar backscatter",
+      "units": "dB",
+      "resolution": "10 m grid posting; display archive, not native scientific samples",
+      "dates": [
+        "2026-06-21",
+        "2026-09-01"
+      ],
+      "source": "NISAR L2 GCOV",
+      "status": "provisional"
+    },
+    {
+      "id": "precipitation-anomaly",
+      "measurement": "Monthly precipitation minus same-calendar-month 1991\u20132020 mean",
+      "units": "mm",
+      "resolution": "Area mean over NOAA Louisiana climate division 9; not pixel-scale rainfall",
+      "dates": [
+        "2026-06-01",
+        "2026-08-31"
+      ],
+      "source": "NOAA NCEI nClimDiv / Climate at a Glance",
+      "sourceUrl": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/1609/pcp/1/0/1991-2026.json?base_prd=true&begbaseyear=1991&endbaseyear=2020",
+      "sourceSha256": "2a6d0ae2049ddc1df4cc89b945d37355c47c149ba45231248d6b100397a9053a",
+      "rawPath": "/drought/noaa-1609-precipitation.json",
+      "baseline": "1991\u20132020 (30 observations per calendar month)",
+      "status": "observed",
+      "series": [
+        {
+          "month": "2026-06",
+          "precipitationMm": 244.094,
+          "normalMm": 173.812,
+          "anomalyMm": 70.282
+        },
+        {
+          "month": "2026-07",
+          "precipitationMm": 127.254,
+          "normalMm": 187.647,
+          "anomalyMm": -60.393
+        },
+        {
+          "month": "2026-08",
+          "precipitationMm": 108.712,
+          "normalMm": 179.603,
+          "anomalyMm": -70.891
+        }
+      ]
+    }
+  ],
+  "independentRecord": {
+    "label": "U.S. Drought Monitor \u2014 September 1, 2026 regional narrative",
+    "url": "https://droughtmonitor.unl.edu/services/data/summary/html/usdm_summary_20260901.html",
+    "scope": "Regional narrative; no site-level drought class inferred"
+  }
+}

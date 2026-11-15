@@ -17,7 +17,7 @@ const mime = {
   png: 'image/png',
 };
 const assets = Object.fromEntries(await Promise.all((await readdir('web', { recursive: true, withFileTypes: true }))
-  .filter(entry => entry.isFile()).map(entry => entry.parentPath.replace(/^web\/?/, '')
+  .filter(entry => entry.isFile()).map(entry => entry.parentPath.replaceAll('\\', '/').replace(/^web\/?/, '')
     .split('/').filter(Boolean).concat(entry.name).join('/')).sort().map(async file => {
   const type = mime[file.split('.').pop()];
   if (!type) throw Error('Unsupported comparison asset ' + file);

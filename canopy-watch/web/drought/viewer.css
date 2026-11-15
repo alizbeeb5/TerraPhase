@@ -1,0 +1,18 @@
+#event-type { width:100%; padding:.7rem; margin:.5rem 0 1rem; background:var(--surface,#fff); color:var(--ink,#183126); border:1px solid #9aa99d; border-radius:4px; }
+.drought-workspace { max-width:1200px; margin:auto; color:#19352b; }
+.drought-workspace section { margin:2rem 0; }
+.drought-workspace details { padding:1rem; background:#f0e9d4; border:1px solid #8a641a; }
+.drought-workspace summary { cursor:pointer; font-weight:600; }
+.drought-workspace li { margin:.5rem 0; line-height:1.5; }
+.drought-panels { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+.drought-panels figure { margin:0; min-width:0; }
+.drought-panels figcaption { padding:.7rem 0; font-weight:600; }
+.radar-viewport { height:320px; overflow:auto; background:repeating-conic-gradient(#d3d8d4 0% 25%,#eef0eb 0% 50%) 0/16px 16px; }
+.radar-viewport img { width:100%; max-width:none; display:block; }
+.drought-tools { display:flex; flex-wrap:wrap; gap:.5rem; margin:1rem 0; }
+.drought-tools button,.drought-workspace select { padding:.6rem; cursor:pointer; }
+.drought-workspace table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+.drought-workspace th,.drought-workspace td { padding:.6rem .3rem; text-align:left; border-bottom:1px solid #c6d0c7; }
+.drought-workspace caption { text-align:left; margin-bottom:.8rem; }
+.drought-workspace a { color:#215e46; text-decoration:underline; }
+@media(max-width:640px) { .drought-panels { grid-template-columns:1fr; } .drought-workspace table { font-size:.8rem; } }
