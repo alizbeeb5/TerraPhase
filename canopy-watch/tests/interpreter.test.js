@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
-const assetPaths = ['/louisiana-screening.json', '/canopy-watch-louisiana.json', '/rondonia/comparison.json'];
+const assetPaths = ['/louisiana-screening.json', '/canopy-watch-louisiana.json', '/rondonia/comparison.json', '/louisiana/outlook.json'];
 const ASSETS = Object.fromEntries(await Promise.all(assetPaths.map(async path => [path,
   ['application/json', (await readFile(new URL('../web' + path, import.meta.url))).toString('base64')]])));
 const screening = (await readFile(new URL('../web/screening.js', import.meta.url), 'utf8')).replace(/^export /gm, '');
@@ -78,4 +78,20 @@ test('event reports accept no patch, use trusted scene evidence and require resp
   assert.ok(evidence.sceneIds[0].startsWith('S1'));
   assert.equal(evidence.summary, undefined);
   assert.equal((await api.fetch(request({ eventId: 'rondonia', scope: 'event', patchId: 2 }), env)).status, 400);
+});
+
+test('Louisiana reports get their local outlook independently of NISAR candidate evidence', async () => {
+  let evidence;
+  const api = createWorker(async (_url, options) => {
+    evidence = JSON.parse(JSON.parse(options.body).input);
+    return Response.json({ status: 'completed', output: [{ content: [{ type: 'output_text',
+      text: JSON.stringify({ ...answer, actions: ['Review subsequent imagery.'] }) }] }] });
+  });
+  const response = await api.fetch(request({ eventId: 'louisiana', scope: 'event', patchId: null,
+    dropDb: 3, minimumHa: 1 }), env);
+  assert.equal(response.status, 200);
+  assert.equal(evidence.outlook.model, 'Distance to recent mapped loss');
+  assert.equal(evidence.outlook.localHeldOut.length, 3);
+  assert.match(evidence.outlook.evidenceSeparation, /independent annual Landsat-derived/);
+  assert.match(evidence.independentEvidence, /No independent forest-loss confirmation/);
 });

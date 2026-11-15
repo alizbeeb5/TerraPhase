@@ -365,13 +365,9 @@ function selectRiskZone(id, focus = true) {
 }
 
 async function prepareOutlook(id, grid, turn) {
-  if (id !== 'rondonia') {
-    showOutlook(null, 'A projection needs compatible repeat observations across multiple years and independently confirmed disturbance history.');
-    return;
-  }
-  showOutlook(null, 'Loading the Rondônia tree-cover-loss outlook…');
+  showOutlook(null, 'Loading the tree-cover-loss outlook…');
   try {
-    const outlook = await loadOutlook(grid);
+    const outlook = await loadOutlook(id, grid);
     if (turn !== state.load) return;
     state.outlook = outlook;
     showOutlook(outlook, outlook.targetYear + ' tree-cover-loss outlook · source history through ' + outlook.cutoff);
