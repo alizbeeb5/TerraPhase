@@ -1,18 +1,55 @@
 const sectionNames = ['What changed', 'What could explain it', 'What to verify', 'Recommended response'];
 
-export function mountReport() {
+export function mountReport({ allowPatch = true } = {}) {
   const button = document.getElementById('interpret-button');
   button.textContent = 'Generate AI report';
   document.getElementById('interpreter-title').textContent = 'Evidence report';
   const controls = document.createElement('div');
   controls.className = 'report-controls';
-  controls.innerHTML = `<label for="report-scope">Report scope</label>
-    <select id="report-scope"><option value="event">Whole event</option><option value="patch">Selected footprint</option></select>
-    <button type="button" id="report-download">Download report</button>`;
+  controls.innerHTML = (allowPatch ? `<label for="report-scope">Report scope</label>
+    <select id="report-scope"><option value="event">Whole event</option><option value="patch">Selected footprint</option></select>` : '')
+    + '<button type="button" id="report-download">Download report</button>';
   document.querySelector('.interpret-head').after(controls);
   const source = document.createElement('details');
   source.id = 'report-sources';
   document.getElementById('interpret-result').after(source);
+}
+
+export function mountEventReport(eventId) {
+  mountReport({ allowPatch: false });
+  const button = document.getElementById('interpret-button');
+  const status = document.getElementById('interpret-status');
+  let baseline, report, comparisonDate, controller;
+  document.getElementById('report-download').onclick = () => downloadReport(report, eventId);
+  button.onclick = async () => {
+    const current = controller = new AbortController();
+    button.disabled = true;
+    status.textContent = 'Generating an evidence report…';
+    try {
+      const response = await fetch('/api/interpret', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: current.signal,
+        body: JSON.stringify({ eventId, scope: 'event', comparisonDate }),
+      });
+      const answer = await response.json();
+      if (current.signal.aborted) return;
+      if (!response.ok) throw Error(answer.error || 'The AI report could not be generated.');
+      report = applyAI(baseline, answer);
+      showReport(report);
+      status.textContent = 'AI report generated from event evidence.';
+    } catch (error) {
+      if (!current.signal.aborted) status.textContent = error.message + ' The evidence report is still available to download.';
+    } finally {
+      if (!current.signal.aborted) button.disabled = false;
+    }
+  };
+  return (nextReport, date) => {
+    controller?.abort();
+    comparisonDate = date;
+    baseline = report = nextReport;
+    status.textContent = '';
+    button.disabled = false;
+    showReport(report);
+  };
 }
 
 export function evidenceReport({ id, patch, result, data, band, dropDb, minimumHa, outlook, numeric, summary, sources }) {

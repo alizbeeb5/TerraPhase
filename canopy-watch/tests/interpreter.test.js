@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
-const assetPaths = ['/louisiana-screening.json', '/canopy-watch-louisiana.json', '/rondonia/comparison.json', '/louisiana/outlook.json'];
+const assetPaths = ['/louisiana-screening.json', '/canopy-watch-louisiana.json', '/rondonia/comparison.json', '/louisiana/outlook.json',
+  '/drought/north-florida.json', '/drought/north-florida-outlook.json', '/hazards/krasheninnikov-eruption/comparison.json',
+  '/hazards/guadalupe-river-flood/comparison.json', '/hazards/guadalupe-river-flood/outlook.json'];
 const ASSETS = Object.fromEntries(await Promise.all(assetPaths.map(async path => [path,
   ['application/json', (await readFile(new URL('../web' + path, import.meta.url))).toString('base64')]])));
 const screening = (await readFile(new URL('../web/screening.js', import.meta.url), 'utf8')).replace(/^export /gm, '');
@@ -94,4 +96,45 @@ test('Louisiana reports get their local outlook independently of NISAR candidate
   assert.equal(evidence.outlook.localHeldOut.length, 3);
   assert.match(evidence.outlook.evidenceSeparation, /independent annual Landsat-derived/);
   assert.match(evidence.independentEvidence, /No independent forest-loss confirmation/);
+});
+
+test('whole-event drought reports use trusted rainfall and outlook without forest metrics', async () => {
+  let payload;
+  const api = createWorker(async (_url, options) => {
+    payload = JSON.parse(options.body);
+    return Response.json({ status: 'completed', output: [{ content: [{ type: 'output_text',
+      text: JSON.stringify({ ...answer, actions: ['Check a local rain gauge.'] }) }] }] });
+  });
+  const selection = { eventId: 'north-florida-drought', scope: 'event', rainfall: { invented: true } };
+  assert.equal((await api.fetch(request(selection), env)).status, 200);
+  const evidence = JSON.parse(payload.input);
+  assert.equal(evidence.topic, 'drought');
+  assert.equal(evidence.radar.units, 'display intensity');
+  assert.equal(evidence.rainfall.months.length, 4);
+  assert.equal(evidence.outlook.division, '0802');
+  assert.equal(evidence.rainfall.invented, undefined);
+  assert.match(payload.instructions, /separate display scaling/);
+  assert.equal((await api.fetch(request({ ...selection, scope: 'patch', patchId: 1 }), env)).status, 400);
+});
+
+test('hazard reports verify the chosen date and use packaged evidence and outlook', async () => {
+  let payload;
+  const api = createWorker(async (_url, options) => {
+    payload = JSON.parse(options.body);
+    return Response.json({ status: 'completed', output: [{ content: [{ type: 'output_text',
+      text: JSON.stringify({ ...answer, actions: ['Review the next matched pass.'] }) }] }] });
+  });
+  const selection = { eventId: 'krasheninnikov-eruption', scope: 'event', comparisonDate: '2026-07-09',
+    radarChange: { medianDb: 9000 } };
+  assert.equal((await api.fetch(request(selection), env)).status, 200);
+  const evidence = JSON.parse(payload.input);
+  assert.equal(evidence.topic, 'hazard');
+  assert.equal(evidence.outlook.kind, 'monitoring');
+  assert.equal(evidence.acquisitions[1].date, selection.comparisonDate);
+  assert.notEqual(evidence.radarChange.medianDb, selection.radarChange.medianDb);
+  assert.match(payload.instructions, /Do not predict earthquakes or eruptions/);
+  assert.equal((await api.fetch(request({ ...selection, comparisonDate: '2026-01-01' }), env)).status, 404);
+  assert.equal((await api.fetch(request({ ...selection, scope: 'patch', patchId: 1 }), env)).status, 400);
+  assert.equal((await api.fetch(request({ eventId: 'guadalupe-river-flood', scope: 'event' }), env)).status, 200);
+  assert.equal(JSON.parse(payload.input).replay.horizonMinutes, 60);
 });

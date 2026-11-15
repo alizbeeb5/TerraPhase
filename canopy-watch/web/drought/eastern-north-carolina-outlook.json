@@ -1,0 +1,58 @@
+{
+  "schema": "terraphase-rainfall-outlook/v1",
+  "eventId": "eastern-north-carolina-drought",
+  "division": "3107",
+  "through": "2026-10",
+  "target": "2026-11",
+  "targetDefinition": "Three-month precipitation below the 20th percentile for that ending month",
+  "referenceYears": [
+    1996,
+    2025
+  ],
+  "thresholdMm": 231.4,
+  "priorTwoMonthsMm": 118.1,
+  "rainfallRange": {
+    "observed": [
+      {
+        "month": "2026-09",
+        "cumulativeMm": 55.6
+      },
+      {
+        "month": "2026-10",
+        "cumulativeMm": 118.1
+      }
+    ],
+    "lowMm": 145.2,
+    "medianMm": 189.4,
+    "highMm": 300.0
+  },
+  "probability": 0.758065,
+  "baselineProbability": 0.758065,
+  "model": "conditional-climatology",
+  "modelLabel": "Conditional climatology",
+  "validation": {
+    "years": [
+      2001,
+      2010
+    ],
+    "months": 120,
+    "dryMonths": 31,
+    "logisticBrier": 0.10238310624128497,
+    "baselineBrier": 0.10089967048213667
+  },
+  "backtest": {
+    "years": [
+      2011,
+      2025
+    ],
+    "months": 180,
+    "dryMonths": 34,
+    "logisticBrier": 0.10106134334227591,
+    "baselineBrier": 0.09768903919528268
+  },
+  "source": {
+    "name": "NOAA NCEI Climate at a Glance nClimDiv",
+    "sha256": "177ea73d268eb68579bde7bd77811a0eb5f41a27a67387fa77d80335fa44bab7",
+    "url": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/3107/pcp/1/0/1950-2026.json"
+  }
+}

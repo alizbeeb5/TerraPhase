@@ -1,0 +1,539 @@
+{
+  "schema": "terraphase-river-outlook/v1",
+  "station": "08166200",
+  "location": "Guadalupe River at Kerrville, TX",
+  "model": "Gradient-boosted stage change",
+  "trainingPeakFt": 14.65,
+  "horizonMinutes": 60,
+  "trainedYears": [
+    2018,
+    2021
+  ],
+  "validation": {
+    "years": [
+      2022,
+      2023
+    ],
+    "samples": 68846,
+    "changingSamples": 25,
+    "trainedMaeFt": 0.009,
+    "persistenceMaeFt": 0.009,
+    "trainedChangingMaeFt": 0.105,
+    "persistenceChangingMaeFt": 0.096
+  },
+  "heldOut": {
+    "years": [
+      2024,
+      2024
+    ],
+    "samples": 35116,
+    "changingSamples": 94,
+    "trainedMaeFt": 0.009,
+    "persistenceMaeFt": 0.009,
+    "trainedChangingMaeFt": 0.707,
+    "persistenceChangingMaeFt": 0.805
+  },
+  "replay": [
+    {
+      "utc": "2025-07-04T05:00:00Z",
+      "observedFt": 0.39,
+      "predictedFt": 0.37,
+      "persistenceFt": 0.37
+    },
+    {
+      "utc": "2025-07-04T05:15:00Z",
+      "observedFt": 0.4,
+      "predictedFt": 0.38,
+      "persistenceFt": 0.38
+    },
+    {
+      "utc": "2025-07-04T05:30:00Z",
+      "observedFt": 0.43,
+      "predictedFt": 0.38,
+      "persistenceFt": 0.38
+    },
+    {
+      "utc": "2025-07-04T05:45:00Z",
+      "observedFt": 0.53,
+      "predictedFt": 0.39,
+      "persistenceFt": 0.39
+    },
+    {
+      "utc": "2025-07-04T06:00:00Z",
+      "observedFt": 0.7,
+      "predictedFt": 0.39,
+      "persistenceFt": 0.39
+    },
+    {
+      "utc": "2025-07-04T06:15:00Z",
+      "observedFt": 0.79,
+      "predictedFt": 0.4,
+      "persistenceFt": 0.4
+    },
+    {
+      "utc": "2025-07-04T06:30:00Z",
+      "observedFt": 0.84,
+      "predictedFt": 0.43,
+      "persistenceFt": 0.43
+    },
+    {
+      "utc": "2025-07-04T06:45:00Z",
+      "observedFt": 0.89,
+      "predictedFt": 0.56,
+      "persistenceFt": 0.53
+    },
+    {
+      "utc": "2025-07-04T07:00:00Z",
+      "observedFt": 0.95,
+      "predictedFt": 0.85,
+      "persistenceFt": 0.7
+    },
+    {
+      "utc": "2025-07-04T07:15:00Z",
+      "observedFt": 1.04,
+      "predictedFt": 0.82,
+      "persistenceFt": 0.79
+    },
+    {
+      "utc": "2025-07-04T07:30:00Z",
+      "observedFt": 1.15,
+      "predictedFt": 0.87,
+      "persistenceFt": 0.84
+    },
+    {
+      "utc": "2025-07-04T07:45:00Z",
+      "observedFt": 1.28,
+      "predictedFt": 0.89,
+      "persistenceFt": 0.89
+    },
+    {
+      "utc": "2025-07-04T08:00:00Z",
+      "observedFt": 1.47,
+      "predictedFt": 0.95,
+      "persistenceFt": 0.95
+    },
+    {
+      "utc": "2025-07-04T08:15:00Z",
+      "observedFt": 1.64,
+      "predictedFt": 1.07,
+      "persistenceFt": 1.04
+    },
+    {
+      "utc": "2025-07-04T08:30:00Z",
+      "observedFt": 1.71,
+      "predictedFt": 1.18,
+      "persistenceFt": 1.15
+    },
+    {
+      "utc": "2025-07-04T08:45:00Z",
+      "observedFt": 1.74,
+      "predictedFt": 1.34,
+      "persistenceFt": 1.28
+    },
+    {
+      "utc": "2025-07-04T09:00:00Z",
+      "observedFt": 1.74,
+      "predictedFt": 1.53,
+      "persistenceFt": 1.47
+    },
+    {
+      "utc": "2025-07-04T09:15:00Z",
+      "observedFt": 1.75,
+      "predictedFt": 1.7,
+      "persistenceFt": 1.64
+    },
+    {
+      "utc": "2025-07-04T09:30:00Z",
+      "observedFt": 1.78,
+      "predictedFt": 1.74,
+      "persistenceFt": 1.71
+    },
+    {
+      "utc": "2025-07-04T09:45:00Z",
+      "observedFt": 1.82,
+      "predictedFt": 1.74,
+      "persistenceFt": 1.74
+    },
+    {
+      "utc": "2025-07-04T10:00:00Z",
+      "observedFt": 1.82,
+      "predictedFt": 1.74,
+      "persistenceFt": 1.74
+    },
+    {
+      "utc": "2025-07-04T10:15:00Z",
+      "observedFt": 5.16,
+      "predictedFt": 1.75,
+      "persistenceFt": 1.75
+    },
+    {
+      "utc": "2025-07-04T10:30:00Z",
+      "observedFt": 9.17,
+      "predictedFt": 1.78,
+      "persistenceFt": 1.78
+    },
+    {
+      "utc": "2025-07-04T10:45:00Z",
+      "observedFt": 14.6,
+      "predictedFt": 1.82,
+      "persistenceFt": 1.82
+    },
+    {
+      "utc": "2025-07-04T11:00:00Z",
+      "observedFt": 26.06,
+      "predictedFt": 1.82,
+      "persistenceFt": 1.82
+    },
+    {
+      "utc": "2025-07-04T11:15:00Z",
+      "observedFt": 32.16,
+      "predictedFt": 6.45,
+      "persistenceFt": 5.16
+    },
+    {
+      "utc": "2025-07-04T11:30:00Z",
+      "observedFt": 34.29,
+      "predictedFt": 10.46,
+      "persistenceFt": 9.17
+    },
+    {
+      "utc": "2025-07-04T11:45:00Z",
+      "observedFt": 34.03,
+      "predictedFt": 15.89,
+      "persistenceFt": 14.6
+    },
+    {
+      "utc": "2025-07-04T12:00:00Z",
+      "observedFt": 31.75,
+      "predictedFt": 27.35,
+      "persistenceFt": 26.06
+    },
+    {
+      "utc": "2025-07-04T12:15:00Z",
+      "observedFt": 27.7,
+      "predictedFt": 33.45,
+      "persistenceFt": 32.16
+    },
+    {
+      "utc": "2025-07-04T12:30:00Z",
+      "observedFt": 23.24,
+      "predictedFt": 35.58,
+      "persistenceFt": 34.29
+    },
+    {
+      "utc": "2025-07-04T12:45:00Z",
+      "observedFt": 19.08,
+      "predictedFt": 34.71,
+      "persistenceFt": 34.03
+    },
+    {
+      "utc": "2025-07-04T13:00:00Z",
+      "observedFt": 15.05,
+      "predictedFt": 31.54,
+      "persistenceFt": 31.75
+    },
+    {
+      "utc": "2025-07-04T13:15:00Z",
+      "observedFt": 13.7,
+      "predictedFt": 27.49,
+      "persistenceFt": 27.7
+    },
+    {
+      "utc": "2025-07-04T13:30:00Z",
+      "observedFt": 12.43,
+      "predictedFt": 23.03,
+      "persistenceFt": 23.24
+    },
+    {
+      "utc": "2025-07-04T13:45:00Z",
+      "observedFt": 11.79,
+      "predictedFt": 18.87,
+      "persistenceFt": 19.08
+    },
+    {
+      "utc": "2025-07-04T14:00:00Z",
+      "observedFt": 11.78,
+      "predictedFt": 14.84,
+      "persistenceFt": 15.05
+    },
+    {
+      "utc": "2025-07-04T14:15:00Z",
+      "observedFt": 12.03,
+      "predictedFt": 13.49,
+      "persistenceFt": 13.7
+    },
+    {
+      "utc": "2025-07-04T14:30:00Z",
+      "observedFt": 12.24,
+      "predictedFt": 12.22,
+      "persistenceFt": 12.43
+    },
+    {
+      "utc": "2025-07-04T14:45:00Z",
+      "observedFt": 12.24,
+      "predictedFt": 11.58,
+      "persistenceFt": 11.79
+    },
+    {
+      "utc": "2025-07-04T15:00:00Z",
+      "observedFt": 12.28,
+      "predictedFt": 11.46,
+      "persistenceFt": 11.78
+    },
+    {
+      "utc": "2025-07-04T15:15:00Z",
+      "observedFt": null,
+      "predictedFt": 13.08,
+      "persistenceFt": 12.03
+    },
+    {
+      "utc": "2025-07-04T15:30:00Z",
+      "observedFt": null,
+      "predictedFt": 12.63,
+      "persistenceFt": 12.24
+    },
+    {
+      "utc": "2025-07-04T15:45:00Z",
+      "observedFt": null,
+      "predictedFt": 12.3,
+      "persistenceFt": 12.24
+    },
+    {
+      "utc": "2025-07-04T16:00:00Z",
+      "observedFt": null,
+      "predictedFt": 12.28,
+      "persistenceFt": 12.28
+    },
+    {
+      "utc": "2025-07-04T16:15:00Z",
+      "observedFt": 9.84,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T16:30:00Z",
+      "observedFt": 9.47,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T16:45:00Z",
+      "observedFt": 9.4,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T17:00:00Z",
+      "observedFt": 10.16,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T17:15:00Z",
+      "observedFt": 11.51,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T17:30:00Z",
+      "observedFt": 12.84,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T17:45:00Z",
+      "observedFt": 13.85,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T18:00:00Z",
+      "observedFt": 14.11,
+      "predictedFt": null,
+      "persistenceFt": null
+    },
+    {
+      "utc": "2025-07-04T18:15:00Z",
+      "observedFt": 14.05,
+      "predictedFt": 12.8,
+      "persistenceFt": 11.51
+    },
+    {
+      "utc": "2025-07-04T18:30:00Z",
+      "observedFt": 13.74,
+      "predictedFt": 14.13,
+      "persistenceFt": 12.84
+    },
+    {
+      "utc": "2025-07-04T18:45:00Z",
+      "observedFt": 13.45,
+      "predictedFt": 15.14,
+      "persistenceFt": 13.85
+    },
+    {
+      "utc": "2025-07-04T19:00:00Z",
+      "observedFt": 13.11,
+      "predictedFt": 14.54,
+      "persistenceFt": 14.11
+    },
+    {
+      "utc": "2025-07-04T19:15:00Z",
+      "observedFt": 12.75,
+      "predictedFt": 14.11,
+      "persistenceFt": 14.05
+    },
+    {
+      "utc": "2025-07-04T19:30:00Z",
+      "observedFt": 12.41,
+      "predictedFt": 13.53,
+      "persistenceFt": 13.74
+    },
+    {
+      "utc": "2025-07-04T19:45:00Z",
+      "observedFt": 12.06,
+      "predictedFt": 13.24,
+      "persistenceFt": 13.45
+    },
+    {
+      "utc": "2025-07-04T20:00:00Z",
+      "observedFt": 11.74,
+      "predictedFt": 12.9,
+      "persistenceFt": 13.11
+    },
+    {
+      "utc": "2025-07-04T20:15:00Z",
+      "observedFt": 11.49,
+      "predictedFt": 12.54,
+      "persistenceFt": 12.75
+    },
+    {
+      "utc": "2025-07-04T20:30:00Z",
+      "observedFt": 11.25,
+      "predictedFt": 12.2,
+      "persistenceFt": 12.41
+    },
+    {
+      "utc": "2025-07-04T20:45:00Z",
+      "observedFt": 11.09,
+      "predictedFt": 11.85,
+      "persistenceFt": 12.06
+    },
+    {
+      "utc": "2025-07-04T21:00:00Z",
+      "observedFt": 10.98,
+      "predictedFt": 11.53,
+      "persistenceFt": 11.74
+    },
+    {
+      "utc": "2025-07-04T21:15:00Z",
+      "observedFt": 10.85,
+      "predictedFt": 11.28,
+      "persistenceFt": 11.49
+    },
+    {
+      "utc": "2025-07-04T21:30:00Z",
+      "observedFt": 10.66,
+      "predictedFt": 11.04,
+      "persistenceFt": 11.25
+    },
+    {
+      "utc": "2025-07-04T21:45:00Z",
+      "observedFt": 10.46,
+      "predictedFt": 10.88,
+      "persistenceFt": 11.09
+    },
+    {
+      "utc": "2025-07-04T22:00:00Z",
+      "observedFt": 10.21,
+      "predictedFt": 10.66,
+      "persistenceFt": 10.98
+    },
+    {
+      "utc": "2025-07-04T22:15:00Z",
+      "observedFt": 9.96,
+      "predictedFt": 10.64,
+      "persistenceFt": 10.85
+    },
+    {
+      "utc": "2025-07-04T22:30:00Z",
+      "observedFt": 9.67,
+      "predictedFt": 10.45,
+      "persistenceFt": 10.66
+    },
+    {
+      "utc": "2025-07-04T22:45:00Z",
+      "observedFt": 9.38,
+      "predictedFt": 10.25,
+      "persistenceFt": 10.46
+    },
+    {
+      "utc": "2025-07-04T23:00:00Z",
+      "observedFt": 9.05,
+      "predictedFt": 10.0,
+      "persistenceFt": 10.21
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2018-01-01&endDT=2018-06-30",
+      "sha256": "9d52a0020dd36252f188bca2bc8bba7636d5d97c2775d4ca676158d48a1c9430"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2018-07-01&endDT=2018-12-31",
+      "sha256": "5b1578d0eacf80713d49a2ee10379ee9540174a92e5b6749c2263300e246947d"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2019-01-01&endDT=2019-06-30",
+      "sha256": "0858ba6093071bd4e707df41671debb5e63332cce9c17104394780c433d47b5b"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2019-07-01&endDT=2019-12-31",
+      "sha256": "767c91fb088a13ff7818d6d94c3df8759fb33663c4aab5f835f124ca8afba672"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2020-01-01&endDT=2020-06-30",
+      "sha256": "6642a8eab8caa42180e2fbf7b9c30c72592e67e9d0514fc08969f3d71482658a"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2020-07-01&endDT=2020-12-31",
+      "sha256": "cff963d930648bd6f402d226ce155005089e9e1bab1e45e85823e1d25b3f0940"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2021-01-01&endDT=2021-06-30",
+      "sha256": "1542ccf04eb35be5d9819c4f6f8b47da2c6f1707edc0b4b826779bb45dc7457c"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2021-07-01&endDT=2021-12-31",
+      "sha256": "e9e157b08c58018ee519fc77455dba670ab8a150427325f4569cebba03ec281d"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2022-01-01&endDT=2022-06-30",
+      "sha256": "319a92bb23a8099e8709eaebe304ce0526cd78887101a731d109c2241f422313"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2022-07-01&endDT=2022-12-31",
+      "sha256": "e65bbb30421477ed3999fe0a1df7bb20af2e0e7a227c2855f16559961ac59545"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2023-01-01&endDT=2023-06-30",
+      "sha256": "a6b75cdd1a462067be7ba0d9d118e4956d201e13c6120ba52c1a0738ff4fef4d"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2023-07-01&endDT=2023-12-31",
+      "sha256": "42d05a204ca76dc7dc27dd407a04e4fc9ad3f2e608712913cd61535576a1fe95"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2024-01-01&endDT=2024-06-30",
+      "sha256": "486b0a29c08e921643043d55e19e9f70a58dfa8524fee793daf0fd29580e2ae7"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2024-07-01&endDT=2024-12-31",
+      "sha256": "69a537ebbbdb253e7d84cad64f41eb0477a06b1919f87124f88e8ec2994f8e88"
+    },
+    {
+      "url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08166200&parameterCd=00065&startDT=2025-07-03&endDT=2025-07-08",
+      "sha256": "8d33e3cbdcc247cbb052fdaff1a437a60275a111692752c8e133446195c3b0ad"
+    }
+  ],
+  "stationUrl": "https://waterdata.usgs.gov/monitoring-location/USGS-08166200/"
+}

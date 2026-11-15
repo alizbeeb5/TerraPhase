@@ -1,0 +1,8 @@
+.hazard-workspace .plate canvas{image-rendering:auto}
+.hazard-timeline{display:inline-flex;gap:6px;align-items:center;margin-top:8px;color:var(--muted);font-size:.76rem}
+.hazard-workspace .viewport{background:#e8eeeb}
+.hazard-workspace .terrain-controls{justify-content:flex-start}
+.hazard-outlook .hazard-replay{margin:9px 0}
+.hazard-replay canvas{display:block;width:100%;height:auto;background:#f4f7f4;border:1px solid var(--stroke);border-radius:5px}
+.hazard-replay figcaption{margin-top:6px;font-size:.76rem;line-height:1.45}
+.hazard-outlook details a{display:inline-block;margin-top:6px}

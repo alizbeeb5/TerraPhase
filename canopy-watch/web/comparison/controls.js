@@ -1,5 +1,5 @@
 // Mount inside the existing comparison shell; index.html belongs to the globe teammate.
-export function mountControls() {
+export function mountControls({ includeFootprints = true } = {}) {
   const toolbar = document.createElement('div');
   const back = document.createElement('button');
   back.type = 'button'; back.className = 'comparison-back'; back.textContent = '← Back to globe';
@@ -33,11 +33,13 @@ export function mountControls() {
     <p id="analysis-note"></p><p id="quality-note"></p>
     <button type="button" id="export-evidence">Download evidence JSON</button>`;
   document.querySelector('#comparison .evidence-head').after(summary);
-  const list = document.createElement('div');
-  list.id = 'patch-list';
-  list.className = 'comparison-patch-list';
-  list.setAttribute('aria-label', 'Footprints: select to focus every map');
-  document.getElementById('patch-detail').after(list);
+  if (includeFootprints) {
+    const list = document.createElement('div');
+    list.id = 'patch-list';
+    list.className = 'comparison-patch-list';
+    list.setAttribute('aria-label', 'Footprints: select to focus every map');
+    document.getElementById('patch-detail').after(list);
+  }
   for (const map of document.querySelectorAll('.map-panel canvas')) {
     map.tabIndex = 0;
     map.setAttribute('aria-description', 'Drag or use arrow keys to pan all panels. Plus and minus zoom. Home fits the study area.');

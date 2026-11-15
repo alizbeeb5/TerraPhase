@@ -1,0 +1,58 @@
+{
+  "schema": "terraphase-rainfall-outlook/v1",
+  "eventId": "louisiana-drought",
+  "division": "1609",
+  "through": "2026-10",
+  "target": "2026-11",
+  "targetDefinition": "Three-month precipitation below the 20th percentile for that ending month",
+  "referenceYears": [
+    1996,
+    2025
+  ],
+  "thresholdMm": 210.0,
+  "priorTwoMonthsMm": 180.3,
+  "rainfallRange": {
+    "observed": [
+      {
+        "month": "2026-09",
+        "cumulativeMm": 112.0
+      },
+      {
+        "month": "2026-10",
+        "cumulativeMm": 180.3
+      }
+    ],
+    "lowMm": 197.5,
+    "medianMm": 242.6,
+    "highMm": 361.5
+  },
+  "probability": 0.209677,
+  "baselineProbability": 0.209677,
+  "model": "conditional-climatology",
+  "modelLabel": "Conditional climatology",
+  "validation": {
+    "years": [
+      2001,
+      2010
+    ],
+    "months": 120,
+    "dryMonths": 24,
+    "logisticBrier": 0.10189847962026491,
+    "baselineBrier": 0.08715747485258413
+  },
+  "backtest": {
+    "years": [
+      2011,
+      2025
+    ],
+    "months": 180,
+    "dryMonths": 43,
+    "logisticBrier": 0.07350411183481212,
+    "baselineBrier": 0.07475430685628397
+  },
+  "source": {
+    "name": "NOAA NCEI Climate at a Glance nClimDiv",
+    "sha256": "ab2cc4803db6dfa75255c64e481cc99652f519a03f12bef362b53900c034e2f6",
+    "url": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/1609/pcp/1/0/1950-2026.json"
+  }
+}

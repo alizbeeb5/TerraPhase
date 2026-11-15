@@ -1,0 +1,67 @@
+[
+  {
+    "id": "hubbard-landslides",
+    "type": "landslide",
+    "bounds": [-140.44, 60.03, -138.93, 60.66],
+    "scenes": [
+      ["S1A_IW_GRDH_1SDV_20251128T025507_20251128T025532_062072_07C433_rtc", "S1A_IW_GRDH_1SDV_20251128T025532_20251128T025557_062072_07C433_rtc"],
+      ["S1A_IW_GRDH_1SDV_20251210T025506_20251210T025531_062247_07CB11_rtc", "S1A_IW_GRDH_1SDV_20251210T025531_20251210T025556_062247_07CB11_rtc"]
+    ],
+    "record": {"label": "NASA Earth Observatory · NISAR images of Hubbard Glacier", "url": "https://science.nasa.gov/earth/earth-observatory/landslide-and-avalanche-debris-litter-hubbard-glacier/", "finding": "NISAR images from November 26 and December 8, 2025 show rock and ice debris on Hubbard Glacier after the December 6 earthquake."},
+    "limits": "Terrain shadow, snow conditions and glacier movement can also change VV backscatter. The change map highlights backscatter differences across the radar footprint.",
+    "verification": ["Cross-check visible debris near Mount King George and McArthur Peak with the published NISAR pair.", "Use a later matched pass or cloud-free optical image to check whether the mapped debris persists."],
+    "outlook": {"kind": "monitoring", "summary": "Check mapped runouts and the flatter ice below steep slopes for persistent debris or new movement on future passes.", "condition": "A slope-failure probability needs repeated mapped failures, snow and weather observations, and local validation."}
+  },
+  {
+    "id": "krasheninnikov-eruption",
+    "type": "volcano",
+    "bounds": [160.095, 54.475, 160.54, 54.735],
+    "scenes": [
+      ["S1D_IW_GRDH_1SDV_20260627T193947_20260627T194012_003426_0060A0_rtc"],
+      ["S1D_IW_GRDH_1SDV_20260709T193947_20260709T194012_003601_006687_rtc"],
+      ["S1D_IW_GRDH_1SDV_20260721T193948_20260721T194013_003776_006C7D_rtc"],
+      ["S1D_IW_GRDH_1SDV_20260802T193949_20260802T194014_003951_00729D_rtc"],
+      ["S1D_IW_GRDH_1SDV_20260814T193949_20260814T194014_004126_0078A6_rtc"]
+    ],
+    "record": {"label": "NASA Scientific Visualization Studio · NISAR eruption time series", "url": "https://svs.gsfc.nasa.gov/5675", "finding": "The published NISAR time series from December 2025 through August 2026 shows lava spreading east of Krasheninnikov's northern crater."},
+    "limits": "Every selectable date is compared with the first displayed Sentinel-1 pass, which was acquired during the eruption. Snow, lava texture and terrain shadow affect radar brightness.",
+    "verification": ["Compare the eastern flow margin across repeat passes and check the NISAR time series.", "Cross-check any new boundary with a published volcanic activity assessment or thermal observations."],
+    "outlook": {"kind": "monitoring", "summary": "If effusion continues from the same vent, the active eastern flow margin is the first place to check for growth on the next matched pass.", "condition": "A flow-reach forecast needs current vent activity, effusion rate, a fine DEM and a validated flow model."}
+  },
+  {
+    "id": "guadalupe-river-flood",
+    "type": "flood",
+    "bounds": [-99.39, 29.965, -99.06, 30.108],
+    "scenes": [
+      ["S1A_IW_GRDH_1SDV_20250629T003512_20250629T003537_059854_rtc"],
+      ["S1A_IW_GRDH_1SDV_20250711T003512_20250711T003537_060029_rtc"]
+    ],
+    "reference": {
+      "kind": "water", "service": "DISASTERS_202507_FLOOD_TX/202507_opera_dswx_hls", "raster": 16,
+      "label": "NASA OPERA surface water", "legend": "Blue marks mapped radar surface water on July 11. It includes existing water.",
+      "dates": ["2025-07-11"]
+    },
+    "record": {"label": "NASA Disasters · Central Texas floods", "url": "https://science.data.nasa.gov/disasters/news-events-stories/texas-floods-july-2025", "finding": "NASA documented flash flooding in the Guadalupe River basin on July 4. The July 11 radar pass shows conditions a week after the flood."},
+    "limits": "Backscatter varies with water, vegetation and surface roughness. The July 11 OPERA water layer is a dated observation and does not capture the July 4 peak flood extent.",
+    "verification": ["Use the Kerrville gauge record to check peak timing independently of the radar acquisitions.", "Compare the mapped July 11 surface water with pre-event water, local imagery and documented high-water marks."],
+    "outlook": {"kind": "model", "summary": "Historical one-hour river-stage replay at the USGS Kerrville gauge.", "condition": "The model uses recent river stage. A forecast of where water spreads requires hydraulic modeling, rainfall forecasts and channel data."}
+  },
+  {
+    "id": "la-guaira-earthquakes",
+    "type": "earthquake",
+    "bounds": [-67.78, 10.18, -66.63, 10.74],
+    "scenes": [
+      ["S1A_IW_GRDH_1SDV_20260618T101642_20260618T101707_065022_0831F4_rtc"],
+      ["S1D_IW_GRDH_1SDV_20260625T101601_20260625T101626_003391_005F73_rtc"]
+    ],
+    "reference": {
+      "kind": "los", "service": "DISASTERS_202606_EARTHQUAKE_VENEZUELA/202611_nisar_LOSDisplacement", "raster": 2,
+      "label": "NASA NISAR displacement", "legend": "Radar line-of-sight displacement: blue −50 cm · gray 0 · red +50 cm. Colors saturate at the endpoints. The layer covers only part of the study area.",
+      "dates": ["2026-06-18", "2026-06-30"]
+    },
+    "record": {"label": "NASA ARIA · NISAR line-of-sight displacement maps", "url": "https://gis.earthdata.nasa.gov/portal/home/item.html?id=1d972eab2bbd4098af71c0c61db083fc", "finding": "NASA ARIA used repeat-pass NISAR interferometry to document displacement after the June 24, 2026 earthquakes. The displayed reference is the June 18–30 line-of-sight pair."},
+    "limits": "Sentinel-1 VV change measures brightness. NISAR phase-based displacement measures motion along the radar look direction. The terrain base is static elevation.",
+    "verification": ["Compare the displacement pattern with the other NISAR viewing geometries and independently reported shaking.", "Use a later matched interferogram and ground measurements to check for postseismic movement."],
+    "outlook": {"kind": "monitoring", "summary": "Prioritize repeat observations along the observed coastal deformation and consult official aftershock information for updates.", "condition": "Satellite radar cannot predict the timing, location or magnitude of the next earthquake."}
+  }
+]

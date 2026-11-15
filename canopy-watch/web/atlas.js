@@ -18,6 +18,9 @@ async function renderComparison(event) {
     if (event.type === 'drought') {
       const { mountDrought } = await import('./drought/viewer.js');
       await mountDrought($('event-comparison-root'), event);
+    } else if (event.workspace === 'hazard') {
+      const { mountHazard } = await import('./hazards/viewer.js');
+      await mountHazard(event);
     } else await import('./compare.js');
   } catch {
     $('event-comparison-root').firstElementChild.textContent = 'The comparison could not start. Reload the page to try again.';

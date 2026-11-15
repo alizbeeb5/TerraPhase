@@ -1,0 +1,58 @@
+{
+  "schema": "terraphase-rainfall-outlook/v1",
+  "eventId": "north-florida-drought",
+  "division": "0802",
+  "through": "2026-10",
+  "target": "2026-11",
+  "targetDefinition": "Three-month precipitation below the 20th percentile for that ending month",
+  "referenceYears": [
+    1996,
+    2025
+  ],
+  "thresholdMm": 207.8,
+  "priorTwoMonthsMm": 324.4,
+  "rainfallRange": {
+    "observed": [
+      {
+        "month": "2026-09",
+        "cumulativeMm": 111.5
+      },
+      {
+        "month": "2026-10",
+        "cumulativeMm": 324.4
+      }
+    ],
+    "lowMm": 342.6,
+    "medianMm": 376.8,
+    "highMm": 416.9
+  },
+  "probability": 0.0,
+  "baselineProbability": 0.0,
+  "model": "conditional-climatology",
+  "modelLabel": "Conditional climatology",
+  "validation": {
+    "years": [
+      2001,
+      2010
+    ],
+    "months": 120,
+    "dryMonths": 30,
+    "logisticBrier": 0.11459876163333392,
+    "baselineBrier": 0.10486472424557754
+  },
+  "backtest": {
+    "years": [
+      2011,
+      2025
+    ],
+    "months": 180,
+    "dryMonths": 25,
+    "logisticBrier": 0.10074832924153765,
+    "baselineBrier": 0.08219158284194704
+  },
+  "source": {
+    "name": "NOAA NCEI Climate at a Glance nClimDiv",
+    "sha256": "6b95462d5c346b1f641a6419f7b14ad0a4df1b29e236f38a02ffb960df42d0f3",
+    "url": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/0802/pcp/1/0/1950-2026.json"
+  }
+}

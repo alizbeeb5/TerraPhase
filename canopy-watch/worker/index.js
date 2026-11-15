@@ -2,6 +2,12 @@ let screening;
 let comparison;
 let rondonia;
 const pending = new Set();
+const droughtEvents = {
+  'louisiana-drought': 'louisiana',
+  'north-florida-drought': 'north-florida',
+  'eastern-north-carolina-drought': 'eastern-north-carolina',
+};
+const hazardEvents = new Set(['hubbard-landslides', 'krasheninnikov-eruption', 'guadalupe-river-flood', 'la-guaira-earthquakes']);
 
 function json(value, status = 200) {
   return Response.json(value, { status, headers: { 'Cache-Control': 'no-store' } });
@@ -37,20 +43,26 @@ async function interpret(request, env, url) {
   let selection;
   try { selection = JSON.parse(raw); } catch { return json({ error: 'Invalid patch request.' }, 400); }
   if (pending.has(user)) return json({ error: 'An interpretation is already running.' }, 429);
-  const { eventId = 'louisiana', patchId, dropDb, minimumHa, scope } = selection ?? {};
+  const { eventId = 'louisiana', patchId, dropDb, minimumHa, scope, comparisonDate } = selection ?? {};
   const wholeEvent = scope === 'event';
   const isReport = wholeEvent || scope === 'patch';
+  const drought = typeof eventId === 'string' && Object.hasOwn(droughtEvents, eventId);
+  const hazard = hazardEvents.has(eventId);
   if ((scope !== undefined && !isReport) || (wholeEvent ? patchId != null : !Number.isInteger(patchId))
-      || !['louisiana', 'rondonia'].includes(eventId)) {
+      || (drought || hazard ? !wholeEvent : !['louisiana', 'rondonia'].includes(eventId))) {
     return json({ error: 'Invalid event or footprint.' }, 400);
   }
   if (eventId === 'louisiana' && !validSettings(dropDb, minimumHa)) {
     return json({ error: 'Invalid screening settings.' }, 400);
   }
   const selectedPatch = wholeEvent ? null : patchId;
-  const evidence = eventId === 'rondonia' ? rondoniaEvidence(selectedPatch) : louisianaEvidence(selectedPatch, dropDb, minimumHa);
-  if (!evidence) return json({ error: 'This footprint is outside the selected event.' }, 404);
-  if (isReport) {
+  let evidence;
+  if (drought) evidence = droughtEvidence(droughtEvents[eventId]);
+  else if (hazard) evidence = hazardEvidence(eventId, comparisonDate);
+  else if (eventId === 'rondonia') evidence = rondoniaEvidence(selectedPatch);
+  else evidence = louisianaEvidence(selectedPatch, dropDb, minimumHa);
+  if (!evidence) return json({ error: 'Evidence is unavailable for this selection.' }, 404);
+  if (isReport && !drought && !hazard) {
     evidence.reportScope = scope;
     const path = '/' + eventId + '/outlook.json';
     const outlook = Object.hasOwn(ASSETS, path) ? JSON.parse(assetText(path)) : null;
@@ -73,6 +85,53 @@ async function interpret(request, env, url) {
   } finally {
     pending.delete(user);
   }
+}
+
+function hazardEvidence(eventId, comparisonDate) {
+  const root = '/hazards/' + eventId;
+  const data = JSON.parse(assetText(root + '/comparison.json'));
+  const [before, ...later] = data.scenes;
+  const after = comparisonDate === undefined ? later.at(-1) : later.find(scene => scene.date === comparisonDate);
+  if (!after) return null;
+  const replayPath = root + '/outlook.json';
+  const replay = Object.hasOwn(ASSETS, replayPath) ? JSON.parse(assetText(replayPath)) : null;
+  return {
+    topic: 'hazard', reportScope: 'event', event: eventId, hazardType: data.type,
+    sensor: data.sensor,
+    acquisitions: [before, after].map(scene => ({ date: scene.date, track: scene.track, orbit: scene.orbit,
+      ids: scene.sources.map(source => source.id) })),
+    radarChange: { ...after.change, convention: 'After minus before in dB over shared valid coverage' },
+    reference: data.reference && { label: data.reference.label, dates: data.reference.dates, legend: data.reference.legend },
+    independentRecord: data.record,
+    limitations: data.limits,
+    verification: data.verification,
+    outlook: data.outlook,
+    replay: replay && { location: replay.location, horizonMinutes: replay.horizonMinutes, model: replay.model,
+      test: replay.heldOut, limitations: 'Historical gauge-only replay. It cannot predict flood extent or support emergency use.' },
+  };
+}
+
+function droughtEvidence(site) {
+  const path = '/drought/' + site + '.json';
+  if (!Object.hasOwn(ASSETS, path)) return null;
+  const manifest = JSON.parse(assetText(path));
+  const [radar, rain] = manifest.layers;
+  const scenes = radar.scenes ?? (comparison ??= JSON.parse(assetText('/canopy-watch-louisiana.json'))).scenes;
+  const outlookPath = '/drought/' + site + '-outlook.json';
+  const outlook = Object.hasOwn(ASSETS, outlookPath) ? JSON.parse(assetText(outlookPath)) : null;
+  return {
+    topic: 'drought', reportScope: 'event', event: site,
+    radar: { measurement: radar.measurement, resolution: radar.resolution, units: radar.units,
+      scenes: scenes.map(({ id, date }) => ({ id, date })) },
+    rainfall: { source: rain.source, resolution: rain.resolution, dates: rain.dates, baseline: rain.baseline, months: rain.series },
+    record: manifest.independentRecord,
+    limitations: manifest.limitations,
+    outlook: outlook ? {
+      definition: outlook.targetDefinition, through: outlook.through, target: outlook.target,
+      probability: outlook.probability, thresholdMm: outlook.thresholdMm, division: outlook.division,
+      method: outlook.modelLabel, backtest: outlook.backtest,
+    } : null,
+  };
 }
 
 function louisianaEvidence(patchId, dropDb, minimumHa) {
