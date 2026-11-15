@@ -1,0 +1,101 @@
+[
+  {
+    "location": "Panama",
+    "id": "NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001",
+    "acquired": "2026-10-26T23:44:44.000Z",
+    "cmr": "G4404205368-ASF",
+    "assets": {
+      "HH": {
+        "image": "Panama_2026-10-26_HH.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001_NATIVE_A_HHHH.png",
+        "width": 1440,
+        "height": 1410,
+        "originalWidth": 1986,
+        "originalHeight": 1944
+      },
+      "HV": {
+        "image": "Panama_2026-10-26_HV.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001_NATIVE_A_HVHV.png",
+        "width": 1440,
+        "height": 1410,
+        "originalWidth": 1986,
+        "originalHeight": 1944
+      },
+      "map": {
+        "image": "Panama_2026-10-26_map.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001_LATLON.png",
+        "width": 1440,
+        "height": 1418,
+        "originalWidth": 1986,
+        "originalHeight": 1956
+      }
+    },
+    "science": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_040_D_084_4005_DHDH_A_20261026T234444_20261026T234517_P05036_N_F_J_001.h5"
+  },
+  {
+    "location": "Panama",
+    "id": "NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001",
+    "acquired": "2026-11-07T23:44:45.000Z",
+    "cmr": "G4406353405-ASF",
+    "assets": {
+      "HH": {
+        "image": "Panama_2026-11-07_HH.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001_NATIVE_A_HHHH.png",
+        "width": 1440,
+        "height": 1410,
+        "originalWidth": 1986,
+        "originalHeight": 1944
+      },
+      "HV": {
+        "image": "Panama_2026-11-07_HV.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001_NATIVE_A_HVHV.png",
+        "width": 1440,
+        "height": 1410,
+        "originalWidth": 1986,
+        "originalHeight": 1944
+      },
+      "map": {
+        "image": "Panama_2026-11-07_map.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001_LATLON.png",
+        "width": 1440,
+        "height": 1418,
+        "originalWidth": 1986,
+        "originalHeight": 1956
+      }
+    },
+    "science": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001/NISAR_L2_PR_GCOV_035_040_D_084_4005_DHDH_A_20261107T234445_20261107T234518_P05036_N_F_J_001.h5"
+  },
+  {
+    "location": "Rondônia, Brazil",
+    "id": "NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001",
+    "acquired": "2026-10-23T10:01:17.000Z",
+    "cmr": "G4406143048-ASF",
+    "assets": {
+      "HH": {
+        "image": "Rondonia_2026-10-23_HH.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001_NATIVE_A_HHHH.png",
+        "width": 1440,
+        "height": 1400,
+        "originalWidth": 1856,
+        "originalHeight": 1804
+      },
+      "HV": {
+        "image": "Rondonia_2026-10-23_HV.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001_NATIVE_A_HVHV.png",
+        "width": 1440,
+        "height": 1400,
+        "originalWidth": 1856,
+        "originalHeight": 1804
+      },
+      "map": {
+        "image": "Rondonia_2026-10-23_map.webp",
+        "browse": "https://nisar.asf.earthdatacloud.nasa.gov/BROWSE/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001_LATLON.png",
+        "width": 1440,
+        "height": 1406,
+        "originalWidth": 1856,
+        "originalHeight": 1812
+      }
+    },
+    "science": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_161_A_173_2005_DHDH_A_20261023T100117_20261023T100152_P05036_N_F_J_001.h5"
+  }
+]
