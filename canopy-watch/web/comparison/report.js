@@ -60,6 +60,7 @@ export function evidenceReport({ id, patch, result, data, band, dropDb, minimumH
     actions = [noCandidate ? 'Record the current screening settings and revisit the area after the next compatible pass.'
       : 'Prioritize optical checks for the largest candidates. Keep the observed radar footprint and dates in the evidence record.',
       'If an independent source confirms disturbance, share the evidence with the relevant land manager to determine the cause and response.'];
+    if (outlook) actions.push('Use the dashed zones to plan follow-up imagery. Check the 2026 radar candidates separately.');
   }
   const links = [...sources];
   if (outlook) links.push([outlook.source.name, outlook.source.url]);
@@ -75,6 +76,7 @@ export function evidenceReport({ id, patch, result, data, band, dropDb, minimumH
       outlook ? 'Modeled outlook: ' + outlook.targetYear + ', history through ' + outlook.cutoff
         + ', ' + outlook.model + '. Priority zones rank eligible forest cells.'
         : 'A projection needs compatible multi-year observations and an independent disturbance history.',
+      ...(!brazil && outlook ? ['The outlook uses Landsat-derived loss history. Its zones do not verify the 2026 NISAR candidates.'] : []),
       ...(patch?.box ? ['Footprint extent in comparison grid pixels [left, top, right, bottom]: ' + patch.box.join(', ') + '.'] : []),
       ...(patch?.centerM ? ['Footprint center (EPSG:' + data.grid.epsg + '): ' + patch.centerM.join(', ') + ' m.'] : []),
     ],

@@ -1,4 +1,3 @@
-const OUTLOOK_URL = '/rondonia/outlook.json';
 const $ = id => document.getElementById(id);
 const pct = value => (value * 100).toFixed(1) + '%';
 
@@ -16,6 +15,7 @@ export function mountOutlook(onToggle, onZone) {
       <details><summary>Backtest and data source</summary><p id="outlook-method"></p>
         <table><thead><tr><th scope="col">Year</th><th scope="col">Mapped loss cells</th><th scope="col" id="outlook-model-column"></th>
           <th scope="col" id="outlook-alt-column"></th></tr></thead><tbody id="outlook-years"></tbody></table>
+        <p id="outlook-local" hidden></p>
         <p><a id="outlook-source"></a></p></details>
     </div>`;
   document.querySelector('.interpretation').before(card);
@@ -23,12 +23,15 @@ export function mountOutlook(onToggle, onZone) {
   $('outlook-zone').addEventListener('change', event => onZone(Number(event.target.value)));
 }
 
-export async function loadOutlook(grid) {
-  const response = await fetch(OUTLOOK_URL);
+export async function loadOutlook(eventId, grid) {
+  const assetRoot = '/' + encodeURIComponent(eventId) + '/';
+  const response = await fetch(assetRoot + 'outlook.json');
   if (!response.ok) throw Error('The risk outlook could not load.');
   const data = await response.json();
-  if (data.schema !== 'canopy-watch-outlook/v1' || data.eventId !== 'rondonia'
+  if (data.schema !== 'canopy-watch-outlook/v1' || data.eventId !== eventId
       || ['width', 'height', 'epsg', 'spacingM'].some(key => data.grid?.[key] !== grid[key])
+      || (grid.bounds && grid.bounds.some((value, i) => value !== data.bounds?.[i]))
+      || data.zoneRaster !== assetRoot + 'outlook-zones.png'
       || !Array.isArray(data.zones) || !data.zones.length) throw Error('Risk zones do not match this map grid.');
   const image = new Image();
   image.src = data.zoneRaster;
@@ -62,21 +65,38 @@ export function showOutlook(outlook, message) {
   $('outlook-zones').hidden = true;
   $('outlook-zone-detail').textContent = '';
   if (!outlook) return;
-  $('outlook-summary').textContent = 'Dashed magenta zones mark the highest-ranked 10% of eligible forest cells. Use them to prioritize follow-up imagery.';
+  const rank = (outlook.rankedForestShare * 100).toLocaleString('en');
+  const louisiana = outlook.eventId === 'louisiana';
+  $('outlook-summary').textContent = 'Dashed magenta zones mark the highest-ranked ' + rank
+    + '% of eligible forest cells for follow-up imagery.'
+    + (louisiana ? ' This outlook uses annual Landsat-derived tree-cover loss. NISAR footprints show separate radar changes.' : '');
   const evalData = outlook.evaluation;
   const isModel = outlook.model === 'Logistic ranking';
   $('outlook-model-column').textContent = isModel ? 'Selected model' : 'Proximity baseline';
   $('outlook-alt-column').textContent = isModel ? 'Proximity baseline' : 'Logistic model';
+  const localLoss = evalData.localHeldOut?.reduce((total, row) => total + row.lossCells, 0);
+  const localResult = localLoss
+    ? ' In the displayed footprint, the same top-share ranking captured ' + pct(evalData.localCapture)
+      + ' of ' + localLoss.toLocaleString('en') + ' mapped loss cells.'
+    : louisiana ? ' The displayed footprint had no mapped loss in the test years, so the backtest applies to the surrounding study area.' : '';
   $('outlook-method').textContent = outlook.model + ' captured ' + pct(evalData.selectedCapture)
-    + ' of later mapped loss in the highest-ranked 10% of eligible cells in held-out 2023–2025 spatial blocks. '
-    + 'The outlook assumes historical patterns continue. The eligible mask starts with at least 30% canopy cover in 2000 '
+    + ' of later mapped loss in the highest-ranked ' + rank + '% of eligible cells in held-out 2023–2025 spatial blocks.'
+    + localResult + ' The outlook assumes historical patterns continue. The eligible mask starts with at least 30% canopy cover in 2000 '
     + 'and excludes mapped loss through the cutoff. It does not capture regrowth. '
-    + 'The 30 m ranks are drawn on the 20 m viewer grid. Scores describe monitoring priority.';
+    + 'The 30 m ranks are drawn on the ' + outlook.grid.spacingM + ' m viewer grid. Scores describe monitoring priority.';
+  const local = $('outlook-local');
+  local.hidden = !evalData.localHeldOut;
+  if (evalData.localHeldOut) {
+    const field = isModel ? 'modelHits' : 'proximityHits';
+    local.textContent = 'Displayed footprint by year (captured / mapped cells): ' + evalData.localHeldOut
+      .map(row => row.year + ' · ' + (row.lossCells ? row[field] + '/' + row.lossCells : 'no mapped loss'))
+      .join('; ') + '.';
+  }
   $('outlook-years').replaceChildren(...evalData.heldOut.map(row => {
     const tr = document.createElement('tr');
     const values = [row.year, row.lossCells,
-      pct((isModel ? row.modelHits : row.proximityHits) / row.lossCells),
-      pct((isModel ? row.proximityHits : row.modelHits) / row.lossCells)];
+      row.lossCells ? pct((isModel ? row.modelHits : row.proximityHits) / row.lossCells) : '—',
+      row.lossCells ? pct((isModel ? row.proximityHits : row.modelHits) / row.lossCells) : '—'];
     for (const value of values) {
       const td = document.createElement('td');
       td.textContent = value;

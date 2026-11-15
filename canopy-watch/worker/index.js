@@ -52,11 +52,14 @@ async function interpret(request, env, url) {
   if (!evidence) return json({ error: 'This footprint is outside the selected event.' }, 404);
   if (isReport) {
     evidence.reportScope = scope;
-    const path = '/rondonia/outlook.json';
-    const outlook = eventId === 'rondonia' && Object.hasOwn(ASSETS, path) ? JSON.parse(assetText(path)) : null;
+    const path = '/' + eventId + '/outlook.json';
+    const outlook = Object.hasOwn(ASSETS, path) ? JSON.parse(assetText(path)) : null;
     evidence.outlook = outlook
       ? { cutoff: outlook.cutoff, targetYear: outlook.targetYear, model: outlook.model,
           drivers: outlook.drivers, heldOutCapture: outlook.evaluation.selectedCapture, source: outlook.source.name,
+          ...(eventId === 'louisiana' ? { localHeldOut: outlook.evaluation.localHeldOut,
+            localCapture: outlook.evaluation.localCapture,
+            evidenceSeparation: 'The outlook uses independent annual Landsat-derived tree-cover loss through 2025. It does not verify or extrapolate the NISAR radar candidates.' } : {}),
           definition: 'Relative priority among surviving baseline forest cells. The mapped zones and historical capture are not parcel probabilities.' }
       : { available: false, missing: 'A compatible, independently corroborated multi-year history of mapped disturbance is needed.' };
   }
