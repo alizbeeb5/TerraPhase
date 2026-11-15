@@ -60,7 +60,8 @@ async function interpret(request, env, url) {
 
 function louisianaEvidence(patchId, dropDb, minimumHa) {
   screening ??= decodeScreening(JSON.parse(assetText('/louisiana-screening.json')));
-  const patch = screenForest(screening, dropDb, minimumHa).patches.find(entry => entry.id === patchId);
+  const result = screenForest(screening, dropDb, minimumHa);
+  const patch = result.patches.find(entry => entry.id === patchId);
   if (!patch) return null;
   comparison ??= JSON.parse(assetText('/canopy-watch-louisiana.json'));
   const [before, after] = comparison.scenes;
@@ -70,14 +71,18 @@ function louisianaEvidence(patchId, dropDb, minimumHa) {
     frame: before.frame, sensor: 'NISAR L-band', polarization: 'HV with HH context',
     gridSpacingM: screening.grid.spacingM, epsg: screening.grid.epsg,
     historicalTreeCover: 'ESA WorldCover 2021 v200, tree cover and mangroves',
-    dropDb, minimumHa,
+    dropDb, minimumHa, thresholdMarginDb: result.thresholdMarginDb, connectivity: 8,
+    summary: { screenedForestHa: result.forestHa, candidateDisturbanceHa: result.flaggedHa,
+      candidateShareOfScreenedForestPct: result.flaggedForestPct, candidateCount: result.patches.length },
+    scope: 'Candidates within historical forest; not confirmed deforestation. Scene-level statistics are independent of this threshold.',
     patch: {
       areaHa: patch.areaHa, cells: patch.cells, medianHvDb: patch.hvDb, medianHhDb: patch.hhDb,
       centerM: patch.centerM, waterOrWetlandEdgePct: patch.waterOrWetlandEdgePct,
       edgeDefinition: 'Water or herbaceous wetlands among neighboring cells with mapped nonforest classes.',
     },
     changeConvention: 'after minus before (dB)',
-    measurements: 'Approximate radar change recovered from lossless display; clipped at ±8 dB.',
+    measurements: screening.numeric ? 'Unclipped float32 radar change calculated from aligned linear-power inputs.'
+      : 'Approximate radar change recovered from lossless display; clipped at ±8 dB. Threshold includes a 0.06 dB quantization margin.',
     independentEvidence: 'No independent forest-loss confirmation in this study window.',
   };
 }
@@ -90,6 +95,8 @@ function rondoniaEvidence(patchId) {
     area: rondonia.label, dates: rondonia.scenes.map(scene => scene.date),
     orbit: rondonia.scenes[0].orbit, sensor: 'Sentinel-1 C-band', polarization: 'VH',
     gridSpacingM: rondonia.grid.spacingM, patch,
+    scope: patch.id === 2 ? 'Selected stable control: do not count its area as forest loss.'
+      : 'Selected evidence footprint only, not an exhaustive estimate of scene-wide loss.',
     repeatDate: rondonia.repeat.date, stableForestMeanChangeDb: rondonia.patches[1].meanDb,
     changeConvention: 'after minus before (dB)',
     measurements: 'Footprint mean calculated from the archived radar data before display clipping.',

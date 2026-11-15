@@ -13,13 +13,28 @@ function median(values) {
 
 export function decodeScreening(source) {
   if (source.schema !== 'canopy-watch-screening/v1') throw Error('Unrecognized forest screening data.');
-  const { width, height } = source.grid;
+  const { width, height, spacingM, bounds } = source.grid ?? {};
+  if (![width, height].every(n => Number.isInteger(n) && n > 0) || width * height > 4_000_000
+      || !Number.isFinite(spacingM) || spacingM <= 0 || !Array.isArray(bounds) || bounds.length !== 4
+      || !bounds.every(Number.isFinite) || bounds[2] <= bounds[0] || bounds[3] <= bounds[1]) {
+    throw Error('Invalid screening grid.');
+  }
   const layers = Object.fromEntries(['cover', 'HH', 'HV'].map(key => {
     const bytes = Uint8Array.from(atob(source[key]), value => value.charCodeAt(0));
     if (bytes.length !== width * height) throw Error('The forest and radar grids do not match.');
     return [key, bytes];
   }));
-  return { grid: source.grid, ...layers };
+  let numeric = null;
+  if (source.numeric) {
+    if (source.numeric.encoding !== 'float32-le-base64') throw Error('Unsupported numerical change encoding.');
+    numeric = Object.fromEntries(['HH', 'HV'].map(band => {
+      const bytes = Uint8Array.from(atob(source.numeric[band]), value => value.charCodeAt(0));
+      if (bytes.length !== width * height * 4) throw Error('Numerical radar grid dimensions do not match.');
+      const view = new DataView(bytes.buffer);
+      return [band, Float32Array.from({ length: width * height }, (_, i) => view.getFloat32(i * 4, true))];
+    }));
+  }
+  return { grid: source.grid, ...layers, numeric };
 }
 
 export function validSettings(dropDb, minimumHa) {
@@ -32,14 +47,16 @@ export function screenForest(data, dropDb = DEFAULT_DROP_DB, minimumHa = DEFAULT
   const { width, height, spacingM, bounds } = data.grid;
   const [west, , , north] = bounds;
   const cellHa = spacingM ** 2 / 1e4;
-  const decode = value => (value - 127) * 8 / 127;
+  const valueAt = (band, cell) => data.numeric ? data.numeric[band][cell]
+    : data[band][cell] === NO_DATA ? NaN : (data[band][cell] - 127) * 8 / 127;
+  const margin = data.numeric ? 0 : DISPLAY_MARGIN_DB;
   const eligible = new Uint8Array(width * height);
   let forestCells = 0;
   for (let cell = 0; cell < eligible.length; cell++) {
-    const hv = data.HV[cell];
-    if (!FOREST.has(data.cover[cell]) || hv === NO_DATA) continue;
+    const hv = valueAt('HV', cell);
+    if (!FOREST.has(data.cover[cell]) || !Number.isFinite(hv)) continue;
     forestCells++;
-    if (decode(hv) <= -(dropDb + DISPLAY_MARGIN_DB)) eligible[cell] = 1;
+    if (hv <= -(dropDb + margin)) eligible[cell] = 1;
   }
   const queue = new Int32Array(eligible.length);
   const labels = new Uint32Array(eligible.length);
@@ -61,8 +78,8 @@ export function screenForest(data, dropDb = DEFAULT_DROP_DB, minimumHa = DEFAULT
       bottom = Math.max(bottom, y);
       sumX += x + 0.5;
       sumY += y + 0.5;
-      hv.push(decode(data.HV[current]));
-      if (data.HH[current] !== NO_DATA) hh.push(decode(data.HH[current]));
+      hv.push(valueAt('HV', current));
+      if (Number.isFinite(valueAt('HH', current))) hh.push(valueAt('HH', current));
       for (let row = Math.max(0, y - 1); row <= Math.min(height - 1, y + 1); row++) {
         for (let col = Math.max(0, x - 1); col <= Math.min(width - 1, x + 1); col++) {
           const neighbor = row * width + col;
@@ -90,5 +107,7 @@ export function screenForest(data, dropDb = DEFAULT_DROP_DB, minimumHa = DEFAULT
   }
   patches.sort((a, b) => b.cells - a.cells || a.id - b.id);
   const flaggedHa = patches.reduce((sum, patch) => sum + patch.cells, 0) * cellHa;
-  return { patches, labels, forestHa: forestCells * cellHa, flaggedHa };
+  return { patches, labels, forestHa: forestCells * cellHa, flaggedHa,
+    flaggedForestPct: forestCells ? flaggedHa / (forestCells * cellHa) * 100 : null,
+    measurement: data.numeric ? 'float32-unclipped' : 'display-derived-clipped', thresholdMarginDb: margin };
 }

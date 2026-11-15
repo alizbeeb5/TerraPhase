@@ -72,6 +72,15 @@ def main():
         "HH": recover_change(comparison["layers"]["HH"], cover.shape),
         "HV": recover_change(comparison["layers"]["HV"], cover.shape),
     }
+    # Prefer unclipped scientific delta when regenerated from the original HDF5 pair.
+    numerical = [comparison["layers"][band].get("numericChange") for band in ("HH", "HV")]
+    if any(numerical):
+        if not all(item and item.get("encoding") == "float32-le-base64" for item in numerical):
+            raise ValueError("Both polarizations need matching numerical change encodings.")
+        if not all(len(b64decode(item["values"])) == width * height * 4 for item in numerical):
+            raise ValueError("Numerical radar grid dimensions do not match.")
+        payload["numeric"] = {"encoding": "float32-le-base64",
+                              **{band: item["values"] for band, item in zip(("HH", "HV"), numerical)}}
     args.output.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
 
 

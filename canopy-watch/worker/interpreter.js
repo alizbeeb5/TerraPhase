@@ -11,7 +11,9 @@ const SCHEMA = {
   additionalProperties: false,
 };
 const INSTRUCTIONS = `Interpret a satellite comparison for the selected footprint. Use only the
-supplied observations. State the change, area, sensor, and polarization. Say whether change is a
+supplied observations. Separate measurements from inferred causes. Respect the supplied scope,
+quality limitations, screening threshold, quantization margin, and area denominator. Never describe
+a selected footprint as exhaustive scene-wide loss. Never turn candidate area into confirmed loss. State the change, area, sensor, and polarization. Say whether change is a
 mean or median when known. Describe the radar footprint area as such. For a candidate with no
 independent evidence, explain plausible canopy change and alternatives such as moisture or inundation.
 When annual mapped tree-cover loss, optical dates, repeat radar, or a nearby stable control are
