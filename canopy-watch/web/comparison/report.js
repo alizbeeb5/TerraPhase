@@ -1,14 +1,14 @@
 const sectionNames = ['What changed', 'What could explain it', 'What to verify', 'Recommended response'];
 
-export function mountReport() {
+export function mountReport({ allowPatch = true } = {}) {
   const button = document.getElementById('interpret-button');
   button.textContent = 'Generate AI report';
   document.getElementById('interpreter-title').textContent = 'Evidence report';
   const controls = document.createElement('div');
   controls.className = 'report-controls';
-  controls.innerHTML = `<label for="report-scope">Report scope</label>
-    <select id="report-scope"><option value="event">Whole event</option><option value="patch">Selected footprint</option></select>
-    <button type="button" id="report-download">Download report</button>`;
+  controls.innerHTML = (allowPatch ? `<label for="report-scope">Report scope</label>
+    <select id="report-scope"><option value="event">Whole event</option><option value="patch">Selected footprint</option></select>` : '')
+    + '<button type="button" id="report-download">Download report</button>';
   document.querySelector('.interpret-head').after(controls);
   const source = document.createElement('details');
   source.id = 'report-sources';

@@ -12,22 +12,22 @@ export async function listEvents() {
     id: 'louisiana-drought', type: 'drought', name: 'Louisiana rainfall and radar',
     location: 'Southeast Louisiana, USA', center: { lat: 29.91354, lon: -90.28041 },
     beforeDate: '2026-06-21', afterDate: '2026-09-01', status: 'provisional',
-    capabilities: { comparison: true, forecast: false, precipitationAnomaly: true, soilMoisture: false },
-    evidenceLayers: ['gamma0-backscatter', 'precipitation-anomaly'],
+    capabilities: { comparison: true, forecast: true, precipitationAnomaly: true, soilMoisture: false },
+    evidenceLayers: ['gamma0-backscatter', 'precipitation-anomaly', 'regional-rainfall-outlook'],
     manifestPath: '/drought/louisiana.json'
   }, {
     id: 'north-florida-drought', type: 'drought', name: 'North Florida drought and recovery',
     location: 'Lower Santa Fe River basin, Florida, USA', center: { lat: 29.87, lon: -82.59 },
     beforeDate: '2026-07-03', afterDate: '2026-09-13', status: 'provisional',
-    capabilities: { comparison: true, forecast: false, precipitationAnomaly: true, soilMoisture: false },
-    evidenceLayers: ['gcov-browse', 'precipitation-anomaly'],
+    capabilities: { comparison: true, forecast: true, precipitationAnomaly: true, soilMoisture: false },
+    evidenceLayers: ['gcov-browse', 'precipitation-anomaly', 'regional-rainfall-outlook'],
     manifestPath: '/drought/north-florida.json'
   }, {
     id: 'eastern-north-carolina-drought', type: 'drought', name: 'Eastern North Carolina drought',
     location: 'Central Coastal Plain, North Carolina, USA', center: { lat: 35.34, lon: -77.93 },
     beforeDate: '2026-10-24', afterDate: '2026-11-05', status: 'provisional',
-    capabilities: { comparison: true, forecast: false, precipitationAnomaly: true, soilMoisture: false },
-    evidenceLayers: ['gcov-browse', 'precipitation-anomaly'],
+    capabilities: { comparison: true, forecast: true, precipitationAnomaly: true, soilMoisture: false },
+    evidenceLayers: ['gcov-browse', 'precipitation-anomaly', 'regional-rainfall-outlook'],
     manifestPath: '/drought/eastern-north-carolina.json'
   }].map(event => ({ evidenceLayers: ['radar-backscatter', 'forest-reference'], ...event })));
 }

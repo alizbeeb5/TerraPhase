@@ -1,3 +1,5 @@
+import { renderDroughtReport, renderRainfallOutlook } from './analysis.js';
+
 function node(tag, text, parent) {
   const element = document.createElement(tag); if (text != null) element.textContent = text;
   parent?.append(element); return element;
@@ -17,15 +19,32 @@ export async function mountDrought(root, event) {
     const rain = manifest.layers.find(layer => layer.id === 'precipitation-anomaly');
     if (!radar || !rain) throw Error('Missing drought evidence layers');
     const browse = radar.presentation === 'official-browse';
-    const comparison = browse ? null : await load(manifest.comparisonPath);
+    const [comparison, outlook] = await Promise.all([
+      browse ? null : load(manifest.comparisonPath),
+      load(event.manifestPath.replace(/\.json$/, '-outlook.json')).then(value =>
+        value.schema === 'terraphase-rainfall-outlook/v1' && value.eventId === event.id ? value : null).catch(() => null),
+    ]);
+    const workspace = node('div', null, root);
+    workspace.id = 'comparison';
+    workspace.className = 'workspace drought-comparison';
+    const stage = node('section', null, workspace);
+    stage.className = 'stage';
+    stage.setAttribute('aria-label', 'Drought comparison viewer');
+    const evidence = node('aside', null, workspace);
+    evidence.className = 'evidence';
+    evidence.setAttribute('aria-label', 'Drought evidence and outlook');
     notice.textContent = browse ? 'Official NISAR scene previews · observed regional precipitation'
       : 'Provisional radar evidence · observed precipitation · soil moisture unavailable';
-    const limitations = node('details', null, root); limitations.open = true;
+    const limitations = node('details', null, evidence);
+    limitations.className = 'data-panel drought-limits';
     node('summary', 'Evidence status and limits', limitations);
     const list = node('ul', null, limitations);
     manifest.limitations.forEach(text => node('li', text, list));
-    showRadar(root, radar, comparison);
-    const section = node('section', null, root);
+    showRadar(stage, radar, comparison);
+    renderDroughtReport(stage, event, manifest, radar, rain, browse ? radar.scenes : comparison.scenes, outlook);
+    renderRainfallOutlook(evidence, outlook);
+    const section = node('section', null, evidence);
+    section.className = 'data-panel drought-rain';
     node('h2', 'Seasonal precipitation anomaly · mm', section);
     node('p', rain.source + ' · ' + rain.resolution, section);
     node('p', rain.dates.join(' to ') + ' · Baseline: ' + rain.baseline, section);
@@ -38,7 +57,7 @@ export async function mountDrought(root, event) {
     const link = node('a', 'NOAA source and retrieval parameters', section); link.href = rain.sourceUrl;
     const record = node('p', null, section); const recordLink = node('a', manifest.independentRecord.label, record); recordLink.href = manifest.independentRecord.url;
     node('p', manifest.independentRecord.scope, section);
-    const download = node('a', 'Download evidence manifest', root); download.href = event.manifestPath; download.download = event.id + '.json';
+    const download = node('a', 'Download evidence manifest', section); download.href = event.manifestPath; download.download = event.id + '.json';
   } catch (error) { notice.textContent = error.message + '. Return to the globe or reload to retry.'; }
 }
 
@@ -48,18 +67,31 @@ function showRadar(root, radar, comparison) {
   const scenes = browse ? radar.scenes : comparison.scenes;
   const bands = Object.keys(browse ? scenes[0].bands : comparison.layers);
   const section = node('section', null, root);
-  node('h2', browse ? 'NISAR radar previews' : 'Radar backscatter · dB', section);
-  node('p', radar.source + ' · ' + radar.resolution, section);
+  section.className = 'drought-radar';
+  const heading = node('div', null, section);
+  heading.className = 'stage-head drought-stage-head';
+  const headingText = node('div', null, heading);
+  node('h2', browse ? 'NISAR radar previews' : 'Radar backscatter · dB', headingText);
+  node('p', radar.source + ' · ' + radar.resolution, headingText).className = 'stage-meta';
   if (browse) {
     const { track, frame, direction, release } = radar.geometry;
-    node('p', radar.maturity + ' · ' + direction + ' track ' + track + ' · frame ' + frame + ' · ' + release, section);
+    node('p', radar.maturity + ' · ' + direction + ' track ' + track + ' · frame ' + frame + ' · ' + release, headingText).className = 'stage-meta';
   }
-  const label = node('label', 'Polarization ', section);
+  const group = node('div', null, heading);
+  group.className = 'segmented';
+  group.setAttribute('aria-label', 'Comparison layout');
+  const splitButton = node('button', 'Before / After', group);
+  const swipeButton = node('button', 'Swipe', group);
+  splitButton.type = swipeButton.type = 'button';
+  const controls = node('div', null, section);
+  controls.className = 'map-controls drought-map-controls';
+  const label = node('label', 'Polarization ', controls);
   const select = node('select', null, label);
   select.setAttribute('aria-label', 'Radar polarization');
   for (const band of bands) select.append(new Option(band, band));
   select.value = bands.includes('HV') ? 'HV' : bands[0];
-  const legend = node('p', '', section);
+  const legend = node('p', '', controls);
+  legend.className = 'map-key';
   const panels = node('div', null, section);
   panels.className = 'drought-panels';
   const images = scenes.map((scene, index) => {
@@ -84,8 +116,54 @@ function showRadar(root, radar, comparison) {
     return { image, viewport, original };
   });
   let scale = 1;
+  const swipe = node('div', null, section);
+  swipe.className = 'drought-swipe';
+  swipe.hidden = true;
+  const swipeView = node('div', null, swipe);
+  swipeView.className = 'drought-swipe-viewport';
+  const swipeImages = scenes.map((scene, index) => {
+    const image = node('img', null, swipeView);
+    image.alt = (index === 0 ? 'Before' : 'After') + ' radar image · ' + scene.date.slice(0, 10);
+    image.draggable = false;
+    return image;
+  });
+  const divider = node('span', null, swipeView);
+  divider.className = 'drought-swipe-divider';
+  divider.setAttribute('aria-hidden', 'true');
+  const swipeControl = node('label', 'Before / after split', swipe);
+  swipeControl.className = 'drought-swipe-control';
+  const slider = node('input', null, swipeControl);
+  slider.type = 'range';
+  slider.min = '0';
+  slider.max = '100';
+  slider.value = '50';
+  const dateNote = scenes.map(scene => scene.date.slice(0, 10)).join(' → ');
+  node('p', 'Before on left · After on right · ' + dateNote, swipe).className = 'stage-meta';
+  const links = node('div', null, swipe);
+  if (browse) {
+    links.className = 'drought-scene-links';
+    for (const scene of scenes) {
+      node('a', 'Science HDF5 · ' + scene.date.slice(0, 10), links).href = scene.scienceUrl;
+    }
+  }
+  function positionSwipe() {
+    swipeView.style.setProperty('--swipe-position', slider.value + '%');
+    slider.setAttribute('aria-valuetext', slider.value + '% before');
+  }
+  slider.oninput = positionSwipe;
+  positionSwipe();
+
   const tools = node('div', null, section);
   tools.className = 'drought-tools';
+  function setLayout(showSwipe) {
+    splitButton.setAttribute('aria-pressed', String(!showSwipe));
+    swipeButton.setAttribute('aria-pressed', String(showSwipe));
+    panels.hidden = tools.hidden = showSwipe;
+    swipe.hidden = !showSwipe;
+  }
+  splitButton.onclick = () => setLayout(false);
+  swipeButton.onclick = () => setLayout(true);
+  setLayout(false);
   for (const [text, factor] of [['Zoom in', 1.5], ['Zoom out', 1 / 1.5], ['Reset zoom', 0]]) {
     const button = node('button', text, tools);
     button.type = 'button';
@@ -119,6 +197,10 @@ function showRadar(root, radar, comparison) {
       images[1].image.src = layer.after;
       legend.textContent = select.value + ' gamma0 · common grayscale: ' + layer.range.join(' to ') + ' dB. Enlarging this archive adds no detail.';
     }
+    swipeImages.forEach((image, index) => { image.src = images[index].image.getAttribute('src'); });
+    const first = browse ? scenes[0].bands[select.value] : comparison.grid;
+    const second = browse ? scenes[1].bands[select.value] : comparison.grid;
+    if (first && second) swipeView.style.aspectRatio = String(Math.min(first.width / first.height, second.width / second.height));
   }
   select.onchange = update;
   update();

@@ -2,6 +2,11 @@ let screening;
 let comparison;
 let rondonia;
 const pending = new Set();
+const droughtEvents = {
+  'louisiana-drought': 'louisiana',
+  'north-florida-drought': 'north-florida',
+  'eastern-north-carolina-drought': 'eastern-north-carolina',
+};
 
 function json(value, status = 200) {
   return Response.json(value, { status, headers: { 'Cache-Control': 'no-store' } });
@@ -40,17 +45,21 @@ async function interpret(request, env, url) {
   const { eventId = 'louisiana', patchId, dropDb, minimumHa, scope } = selection ?? {};
   const wholeEvent = scope === 'event';
   const isReport = wholeEvent || scope === 'patch';
+  const drought = typeof eventId === 'string' && Object.hasOwn(droughtEvents, eventId);
   if ((scope !== undefined && !isReport) || (wholeEvent ? patchId != null : !Number.isInteger(patchId))
-      || !['louisiana', 'rondonia'].includes(eventId)) {
+      || (drought ? !wholeEvent : !['louisiana', 'rondonia'].includes(eventId))) {
     return json({ error: 'Invalid event or footprint.' }, 400);
   }
   if (eventId === 'louisiana' && !validSettings(dropDb, minimumHa)) {
     return json({ error: 'Invalid screening settings.' }, 400);
   }
   const selectedPatch = wholeEvent ? null : patchId;
-  const evidence = eventId === 'rondonia' ? rondoniaEvidence(selectedPatch) : louisianaEvidence(selectedPatch, dropDb, minimumHa);
-  if (!evidence) return json({ error: 'This footprint is outside the selected event.' }, 404);
-  if (isReport) {
+  let evidence;
+  if (drought) evidence = droughtEvidence(droughtEvents[eventId]);
+  else if (eventId === 'rondonia') evidence = rondoniaEvidence(selectedPatch);
+  else evidence = louisianaEvidence(selectedPatch, dropDb, minimumHa);
+  if (!evidence) return json({ error: 'Evidence is unavailable for this selection.' }, 404);
+  if (isReport && !drought) {
     evidence.reportScope = scope;
     const path = '/' + eventId + '/outlook.json';
     const outlook = Object.hasOwn(ASSETS, path) ? JSON.parse(assetText(path)) : null;
@@ -73,6 +82,29 @@ async function interpret(request, env, url) {
   } finally {
     pending.delete(user);
   }
+}
+
+function droughtEvidence(site) {
+  const path = '/drought/' + site + '.json';
+  if (!Object.hasOwn(ASSETS, path)) return null;
+  const manifest = JSON.parse(assetText(path));
+  const [radar, rain] = manifest.layers;
+  const scenes = radar.scenes ?? (comparison ??= JSON.parse(assetText('/canopy-watch-louisiana.json'))).scenes;
+  const outlookPath = '/drought/' + site + '-outlook.json';
+  const outlook = Object.hasOwn(ASSETS, outlookPath) ? JSON.parse(assetText(outlookPath)) : null;
+  return {
+    topic: 'drought', reportScope: 'event', event: site,
+    radar: { measurement: radar.measurement, resolution: radar.resolution, units: radar.units,
+      scenes: scenes.map(({ id, date }) => ({ id, date })) },
+    rainfall: { source: rain.source, resolution: rain.resolution, dates: rain.dates, baseline: rain.baseline, months: rain.series },
+    record: manifest.independentRecord,
+    limitations: manifest.limitations,
+    outlook: outlook ? {
+      definition: outlook.targetDefinition, through: outlook.through, target: outlook.target,
+      probability: outlook.probability, thresholdMm: outlook.thresholdMm, division: outlook.division,
+      method: outlook.modelLabel, backtest: outlook.backtest,
+    } : null,
+  };
 }
 
 function louisianaEvidence(patchId, dropDb, minimumHa) {

@@ -20,7 +20,7 @@ test('deep links and back preserve type and search; old IDs still resolve',async
  assert.equal(link.searchParams.get('event'),event.id);assert.equal(link.searchParams.get('type'),'drought');
  const back=new URL(eventLink(event,link.searchParams,true),'https://example.test');
  assert.equal(back.searchParams.get('selected'),event.id);assert.equal(back.searchParams.get('q'),'Louisiana');
- assert.equal(back.searchParams.has('event'),false);assert.equal(event.capabilities.forecast,false);
+ assert.equal(back.searchParams.has('event'),false);assert.equal(event.capabilities.forecast,event.type==='drought');
  }
 });
 test('real drought manifest has reproducible seasonal anomalies and honest units',async()=>{
@@ -67,6 +67,29 @@ test('NISAR browse drought cases have on-disk matched scene pairs and reproducib
    const normal = Array.from({ length: 30 }, (_, i) => Number(data[(1991 + i) + month].value))
      .reduce((sum, value) => sum + value, 0) / 30;
    assert.ok(Math.abs(row.anomalyMm - (Number(data[row.month.replace('-', '')].value) - normal) * 25.4) < .001);
+  }
+ }
+});
+
+
+test('each drought outlook identifies its historical source and reports held-out skill', async () => {
+ const events = (await listEvents()).filter(event => event.type === 'drought');
+ for (const event of events) {
+  const path = event.manifestPath.replace(/\.json$/, '-outlook.json');
+  const outlook = JSON.parse(await readFile(new URL('../web' + path, import.meta.url)));
+  const raw = await readFile(new URL('../pipeline/drought/noaa-history/' + outlook.division + '.json', import.meta.url));
+  assert.equal(createHash('sha256').update(raw).digest('hex'), outlook.source.sha256);
+  assert.equal(outlook.eventId, event.id);
+  assert.equal(outlook.backtest.months, 180);
+  assert.ok(outlook.through < outlook.target && outlook.probability >= 0 && outlook.probability <= 1);
+  const range = outlook.rainfallRange;
+  assert.deepEqual(range.observed.at(-1), { month: outlook.through, cumulativeMm: outlook.priorTwoMonthsMm });
+  assert.ok(outlook.priorTwoMonthsMm <= range.lowMm && range.lowMm <= range.medianMm && range.medianMm <= range.highMm);
+  if (outlook.model === 'logistic') {
+   assert.ok(outlook.validation.logisticBrier < outlook.validation.baselineBrier);
+  } else {
+   assert.ok(outlook.validation.baselineBrier <= outlook.validation.logisticBrier);
+   assert.equal(outlook.probability, outlook.baselineProbability);
   }
  }
 });
