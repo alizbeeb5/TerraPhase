@@ -2,11 +2,9 @@
 
 This starter backend reads a NISAR Level-2 GCOV HDF5 file, creates georeferenced full-resolution images, and serves PNG map tiles with a matching legend. The original HDF5 file is opened read-only.
 
-## Canopy Watch forest change
+## Browse real NISAR imagery
 
-The current [Canopy Watch app](canopy-watch/) compares real satellite imagery from Rondônia and Louisiana in aligned before, after, and radar-difference panels. It includes 3D terrain and an OpenAI patch interpreter.
-
-Run `cd canopy-watch && npm run dev` and open [http://127.0.0.1:3000/](http://127.0.0.1:3000/). See the [Canopy Watch README](canopy-watch/README.md) for data sources and interpreter setup.
+Open **NISAR imagery demo** from the world map or go to `/explorer/nisar/`. The bundled official ASF previews show HH, HV, and map overviews for two Panama passes and one Rondônia pass. The Panama pair also supports side-by-side viewing. Each acquisition links to the original PNG and the calibrated HDF5 science download through Earthdata Login. For a static-only demo, serve `dist/` and open `/nisar/`.
 
 ## Open the integrated application
 
