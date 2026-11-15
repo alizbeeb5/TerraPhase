@@ -7,7 +7,6 @@ const dates = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short',
 const statusText = { ready: 'Comparison ready', provisional: 'Provisional evidence', processing: 'Comparison processing', unavailable: 'Imagery unavailable' };
 const statusFor = event => statusText[event.status] ?? statusText.unavailable;
 const formatDate = value => value && Number.isFinite(Date.parse(value)) ? dates.format(new Date(value)) : 'Unavailable';
-const searchKey = value => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
 async function renderComparison(event) {
   $('atlas').hidden = true;
@@ -28,6 +27,9 @@ async function renderComparison(event) {
 async function renderAtlas(events, initialStatus) {
   const list = $('site-list');
   const search = $('site-search');
+  const types = $('event-type');
+  const typeOptions = [...types.querySelectorAll('input')];
+  const selection = $('site-detail');
   const buttons = new Map();
   const previous = params.get('selected');
   let selected = events.find(event => event.id === previous) ?? null;
@@ -39,7 +41,7 @@ async function renderAtlas(events, initialStatus) {
     for (const [id, button] of buttons) button.setAttribute('aria-pressed', String(id === selected?.id));
     globe?.setEvents(visible, selected?.id);
     const showDetail = selected && visible.includes(selected);
-    $('site-detail').hidden = !showDetail;
+    selection.hidden = !showDetail;
     if (!showDetail) return;
     const ready = selected.capabilities?.comparison === true;
     $('selected-location').textContent = selected.location + ' · ' + statusFor(selected);
@@ -71,6 +73,10 @@ async function renderAtlas(events, initialStatus) {
     globe?.focus(event);
     refreshSelection();
     saveView();
+    const bounds = selection.getBoundingClientRect();
+    if (bounds.top < 0 || bounds.bottom > window.innerHeight) {
+      selection.scrollIntoView({ block: 'nearest' });
+    }
   }
 
   for (const event of events) {
@@ -89,7 +95,7 @@ async function renderAtlas(events, initialStatus) {
   }
 
   function filter() {
-    const type = $('event-type').value;
+    const type = typeOptions.find(option => option.checked)?.value ?? 'all';
     params.set('type', type);
     if (search.value.trim()) params.set('q', search.value.trim()); else params.delete('q');
     const url = new URL(location.href); url.search = params.toString();
@@ -103,9 +109,10 @@ async function renderAtlas(events, initialStatus) {
     refreshSelection();
   }
 
-  $('event-type').value = ['all', 'forest-disturbance', 'drought'].includes(params.get('type')) ? params.get('type') : 'all';
+  const initialType = typeOptions.find(option => option.value === params.get('type')) ?? typeOptions[0];
+  initialType.checked = true;
   search.value = params.get('q') ?? '';
-  $('event-type').addEventListener('change', filter);
+  types.addEventListener('change', filter);
   search.disabled = events.length === 0;
   search.addEventListener('input', filter);
   $('explore-link').addEventListener('click', saveView);

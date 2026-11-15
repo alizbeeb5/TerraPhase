@@ -1,4 +1,3 @@
-#event-type { width:100%; padding:.7rem; margin:.5rem 0 1rem; background:var(--surface,#fff); color:var(--ink,#183126); border:1px solid #9aa99d; border-radius:4px; }
 .drought-workspace { max-width:1200px; margin:auto; color:#19352b; }
 .drought-workspace section { margin:2rem 0; }
 .drought-workspace details { padding:1rem; background:#f0e9d4; border:1px solid #8a641a; }
@@ -16,3 +15,6 @@
 .drought-workspace caption { text-align:left; margin-bottom:.8rem; }
 .drought-workspace a { color:#215e46; text-decoration:underline; }
 @media(max-width:640px) { .drought-panels { grid-template-columns:1fr; } .drought-workspace table { font-size:.8rem; } }
+
+.browse-viewport { height:clamp(250px,42vw,565px); }
+.drought-scene-links { display:flex; flex-wrap:wrap; gap:.35rem .9rem; margin:.6rem 0; font-size:.9rem; }

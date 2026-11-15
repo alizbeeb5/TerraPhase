@@ -5,7 +5,8 @@ import { createHash } from 'node:crypto';
 import { listEvents, filterEvents, eventLink } from '../web/comparison/events.js';
 test('type and search intersect; accents and empty results work', async () => {
  const events=await listEvents();
- assert.equal(filterEvents(events,'all').length,3);
+ assert.equal(filterEvents(events,'all').length,5);
+ assert.equal(filterEvents(events,'drought').length,3);
  assert.equal(filterEvents(events,'forest-disturbance').length,2);
  assert.deepEqual(filterEvents(events,'drought','Louisiana').map(e=>e.id),['louisiana-drought']);
  assert.equal(filterEvents(events,'drought','Brazil').length,0);
@@ -33,4 +34,39 @@ test('real drought manifest has reproducible seasonal anomalies and honest units
  assert.ok(Math.abs(row.anomalyMm-(data[row.month.replace('-','')].value-normal)*25.4)<.001);
  }
  assert.equal(manifest.status,'provisional');assert.ok(rain.series.some(r=>r.anomalyMm<0));
+});
+
+test('NISAR browse drought cases have on-disk matched scene pairs and reproducible rainfall', async () => {
+ const web = new URL('../web/', import.meta.url);
+ const events = (await listEvents()).filter(event => event.evidenceLayers?.includes('gcov-browse'));
+ assert.equal(events.length, 2);
+ for (const event of events) {
+  const manifest = JSON.parse(await readFile(new URL(event.manifestPath.slice(1), web)));
+  const [radar, rain] = manifest.layers;
+  assert.equal(event.id, manifest.id);
+  assert.equal(radar.presentation, 'official-browse');
+  assert.equal(radar.units, 'display intensity');
+  assert.deepEqual(radar.dates, [event.beforeDate, event.afterDate]);
+  assert.deepEqual(radar.scenes.map(scene => scene.date.slice(0, 10)), radar.dates);
+  const geometry = scene => scene.id.split('_').slice(5, 11);
+  assert.deepEqual(geometry(radar.scenes[0]), geometry(radar.scenes[1]));
+  for (const scene of radar.scenes) {
+   assert.ok(scene.scienceUrl.endsWith(scene.id + '.h5'));
+   for (const band of ['HH', 'HV']) {
+    const image = scene.bands[band];
+    const file = await readFile(new URL(image.path.slice(1), web));
+    assert.equal(file.toString('ascii', 8, 12), 'WEBP');
+    assert.match(image.sourceSha256, /^[a-f0-9]{64}$/);
+   }
+  }
+  const raw = await readFile(new URL(rain.rawPath.slice(1), web));
+  assert.equal(createHash('sha256').update(raw).digest('hex'), rain.sourceSha256);
+  const { data } = JSON.parse(raw);
+  for (const row of rain.series) {
+   const month = row.month.slice(5);
+   const normal = Array.from({ length: 30 }, (_, i) => Number(data[(1991 + i) + month].value))
+     .reduce((sum, value) => sum + value, 0) / 30;
+   assert.ok(Math.abs(row.anomalyMm - (Number(data[row.month.replace('-', '')].value) - normal) * 25.4) < .001);
+  }
+ }
 });

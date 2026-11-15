@@ -51,3 +51,12 @@
 #event-page .viewport{background:#e8eeeb}
 @media(max-width:790px){.atlas-layout{grid-template-columns:minmax(0,1fr)}.globe-view{height:clamp(300px,65vw,475px)}}
 @media(max-width:420px){.globe-header,.globe-footer{padding-inline:10px}.globe-footer{align-items:start}.globe-view{height:290px}}
+
+.event-types{border:0;padding:0;margin:0 0 14px;min-width:0;display:flex;flex-wrap:wrap;gap:8px}
+.event-types legend{font-weight:650;font-size:.85rem;margin-bottom:7px}
+.event-types label{cursor:pointer;position:relative}
+.event-types input{position:absolute;opacity:0;pointer-events:none}
+.event-types span{display:block;padding:7px 13px;border:1px solid #8ba295;border-radius:8px;background:var(--surface);color:var(--ink);font-weight:650}
+.event-types input:checked+span{background:#246447;color:#fff;border-color:#246447}
+.event-types input:focus-visible+span{outline:2px solid var(--lime);outline-offset:3px}
+.site-detail{border-bottom:1px solid var(--stroke);margin-bottom:12px}
