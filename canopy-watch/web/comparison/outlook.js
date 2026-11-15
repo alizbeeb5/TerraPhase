@@ -6,7 +6,7 @@ export function mountOutlook(onToggle, onZone) {
   card.className = 'data-panel outlook-panel';
   card.setAttribute('aria-labelledby', 'outlook-title');
   card.innerHTML = `<div class="outlook-head"><h2 id="outlook-title">Where to monitor next</h2>
-    <label id="outlook-switch" hidden><input id="show-outlook" type="checkbox"> Show risk zones</label></div>
+    <label id="outlook-switch" hidden><input id="show-outlook" type="checkbox"> Outlook map</label></div>
     <p id="outlook-status"></p>
     <div id="outlook-available" hidden>
       <p id="outlook-summary"></p>

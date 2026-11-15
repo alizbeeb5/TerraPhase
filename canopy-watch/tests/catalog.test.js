@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { listEvents, filterEvents, eventLink } from '../web/comparison/events.js';
+import { mapPosition } from '../web/comparison/map-outlook.js';
 test('type and search intersect; accents and empty results work', async () => {
  const events=await listEvents();
  assert.equal(filterEvents(events,'all').length,9);
@@ -125,6 +126,34 @@ test('each drought outlook identifies its historical source and reports held-out
   } else {
    assert.ok(outlook.validation.baselineBrier <= outlook.validation.logisticBrier);
    assert.equal(outlook.probability, outlook.baselineProbability);
+  }
+ }
+});
+
+test('every event has outlook data at its supported map scale', async () => {
+ const local = route => new URL('../web' + route, import.meta.url);
+ const read = async route => JSON.parse(await readFile(local(route)));
+ const boundaries = await read('/drought/climate-divisions.json');
+ const markers = await read('/hazards/map-sites.json');
+ for (const event of await listEvents()) {
+  if (event.type === 'drought') {
+   const outlook = await read(event.manifestPath.replace(/\.json$/, '-outlook.json'));
+   const matches = boundaries.divisions.filter(division => division.id === outlook.division);
+   assert.equal(matches.length, 1);
+   assert.ok(['Polygon', 'MultiPolygon'].includes(matches[0].geometry.type));
+  } else if (event.workspace === 'hazard') {
+   const data = await read(event.manifestPath);
+   const map = markers[event.id];
+   assert.equal(map.kind, event.type === 'flood' ? 'gauge' : 'monitoring');
+   assert.ok(map.markers.length && map.sources.length);
+   for (const marker of map.markers) {
+    const [x, y] = mapPosition(data.grid.bounds, data.grid.width, data.grid.height, marker.coordinates);
+    assert.ok(x > 0 && x < data.grid.width && y > 0 && y < data.grid.height);
+   }
+  } else {
+   const forecast = await read('/' + event.id + '/outlook.json');
+   assert.ok(forecast.zones.length);
+   await readFile(local(forecast.zoneRaster));
   }
  }
 });

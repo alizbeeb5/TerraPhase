@@ -124,7 +124,8 @@ function evidenceReport(event, manifest, radar, rain, scenes, outlook) {
       ...manifest.limitations,
       'NOAA baseline: ' + rain.baseline + '.',
       ...(outlook ? [outlook.target + ' regional rainfall outlook: ' + probability(outlook.probability)
-        + ' chance of a three-month total below ' + outlook.thresholdMm + ' mm given data through ' + outlook.through + '.'] : []),
+        + ' chance of a three-month total below ' + outlook.thresholdMm + ' mm given data through ' + outlook.through
+        + '. The estimate applies to NOAA climate division ' + outlook.division + ' as a whole.'] : []),
     ],
     provenance: scenes,
     links: [

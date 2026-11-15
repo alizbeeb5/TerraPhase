@@ -6,3 +6,9 @@
 .hazard-replay canvas{display:block;width:100%;height:auto;background:#f4f7f4;border:1px solid var(--stroke);border-radius:5px}
 .hazard-replay figcaption{margin-top:6px;font-size:.76rem;line-height:1.45}
 .hazard-outlook details a{display:inline-block;margin-top:6px}
+.hazard-outlook-map{background:#faf4e9;border-bottom:1px solid var(--stroke)}
+.hazard-outlook-map ul{margin:8px 0;padding-left:18px}
+.hazard-outlook-map label,.hazard-outlook-map-sources{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.hazard-outlook-map input[type=range]{flex:1;min-width:100px;max-width:300px;accent-color:#815420}
+.hazard-outlook-map [role=status]{font-variant-numeric:tabular-nums;color:var(--ink)}
+.hazard-outlook-map-sources{margin-top:8px}
